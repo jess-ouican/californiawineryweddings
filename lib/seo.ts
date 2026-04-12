@@ -1,19 +1,20 @@
 import { Metadata } from 'next';
 
-export function generateWinerySEO(title: string, region: string, rating: number): Metadata {
-  const description = `${title} - Winery wedding venue in ${region}, California. ${rating}/5 stars. Book your dream wine country wedding.`;
+export function generateWinerySEO(title: string, region: string | null, rating: number): Metadata {
+  const regionText = region ? ` in ${region}` : '';
+  const description = `${title} - Winery wedding venue${regionText}, California. ${rating}/5 stars. Book your dream wine country wedding.`;
   
   return {
-    title: `${title} - Winery Wedding Venue in ${region} | California Winery Weddings`,
+    title: `${title} - Winery Wedding Venue${regionText} | California Winery Weddings`,
     description,
     openGraph: {
-      title: `${title} - Winery Wedding Venue in ${region}`,
+      title: `${title} - Winery Wedding Venue${regionText}`,
       description,
       type: 'website',
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${title} - Winery Wedding Venue in ${region}`,
+      title: `${title} - Winery Wedding Venue${regionText}`,
       description,
     },
   };
@@ -46,12 +47,14 @@ export const siteSchema = {
   description: 'Discover 1,300+ California wineries and vineyards for your perfect wedding venue.',
 };
 
-export function generateWinerySchema(winery: any, region: string) {
+export function generateWinerySchema(winery: any, region: string | null) {
   return {
     '@context': 'https://schema.org',
     '@type': ['LocalBusiness', 'WeddingVenue'],
     name: winery.title,
-    description: `${winery.title} - Wedding venue winery in ${region}, California`,
+    description: region 
+      ? `${winery.title} - Wedding venue winery in ${region}, California`
+      : `${winery.title} - Wedding venue winery in California`,
     address: {
       '@type': 'PostalAddress',
       streetAddress: winery.address,

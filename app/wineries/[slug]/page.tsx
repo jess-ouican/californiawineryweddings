@@ -1,9 +1,9 @@
 import { getWineryBySlug, slugify } from '@/lib/utils';
 import { loadWineries } from '@/lib/data';
 import { generateWinerySEO, generateWinerySchema } from '@/lib/seo';
-import Image from 'next/image';
 import Link from 'next/link';
 import LeadForm from '@/components/LeadForm';
+import WineryImage from '@/components/WineryImage';
 import { Metadata } from 'next';
 
 export const revalidate = 3600;
@@ -58,12 +58,18 @@ export default async function WineryPage({ params }: { params: Promise<Params> }
   }
 
   const schema = generateWinerySchema(winery, winery.city);
-  const ratingPercentages = {
+  const ratingPercentages = winery.reviewsDistribution && winery.reviewsCount && winery.totalScore ? {
     five: Math.round((winery.reviewsDistribution.fiveStar / winery.reviewsCount) * 100),
     four: Math.round((winery.reviewsDistribution.fourStar / winery.reviewsCount) * 100),
     three: Math.round((winery.reviewsDistribution.threeStar / winery.reviewsCount) * 100),
     two: Math.round((winery.reviewsDistribution.twoStar / winery.reviewsCount) * 100),
     one: Math.round((winery.reviewsDistribution.oneStar / winery.reviewsCount) * 100),
+  } : {
+    five: 0,
+    four: 0,
+    three: 0,
+    two: 0,
+    one: 0,
   };
 
   return (
@@ -78,9 +84,11 @@ export default async function WineryPage({ params }: { params: Promise<Params> }
       {/* Header */}
       <section className="bg-gradient-to-br from-[#F5E6D3] to-[#F0D5B8] py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Link href={`/regions/${slugify(winery.city)}`} className="text-[#6B3E2E] hover:underline text-sm mb-4 inline-block">
-            ← Back to {winery.city}
-          </Link>
+          {winery.city && (
+            <Link href={`/regions/${slugify(winery.city)}`} className="text-[#6B3E2E] hover:underline text-sm mb-4 inline-block">
+              ← Back to {winery.city}
+            </Link>
+          )}
           <h1 className="font-serif text-5xl font-bold text-[#6B3E2E] mb-2">
             {winery.title}
           </h1>
@@ -94,15 +102,10 @@ export default async function WineryPage({ params }: { params: Promise<Params> }
           <div className="lg:col-span-2 space-y-8">
             {/* Image */}
             <div className="relative w-full h-96 rounded-lg overflow-hidden bg-gray-200">
-              <Image
+              <WineryImage
                 src={winery.imageUrl}
                 alt={winery.title}
-                fill
-                className="object-cover"
-                priority
-                onError={(e) => {
-                  e.currentTarget.src = 'https://via.placeholder.com/800x400?text=No+Image';
-                }}
+                title={winery.title}
               />
             </div>
 
@@ -111,7 +114,7 @@ export default async function WineryPage({ params }: { params: Promise<Params> }
               <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                 <h3 className="text-sm font-semibold text-gray-600 mb-2">LOCATION</h3>
                 <p className="font-serif text-xl font-bold text-[#6B3E2E]">
-                  {winery.city}, California
+                  {winery.city ? `${winery.city}, California` : 'California'}
                 </p>
               </div>
               <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
@@ -147,59 +150,70 @@ export default async function WineryPage({ params }: { params: Promise<Params> }
             </div>
 
             {/* Rating Section */}
-            <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-200">
-              <h2 className="font-serif text-2xl font-bold text-[#6B3E2E] mb-6">
-                Guest Reviews
-              </h2>
+            {winery.totalScore && winery.reviewsCount ? (
+              <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-200">
+                <h2 className="font-serif text-2xl font-bold text-[#6B3E2E] mb-6">
+                  Guest Reviews
+                </h2>
 
-              <div className="mb-8">
-                <div className="flex items-end gap-4 mb-2">
-                  <div className="text-5xl font-serif font-bold text-[#6B3E2E]">
-                    {winery.totalScore}
-                  </div>
-                  <div>
-                    <div className="text-lg text-yellow-600">★★★★★</div>
-                    <p className="text-sm text-gray-600">Based on {winery.reviewsCount} reviews</p>
+                <div className="mb-8">
+                  <div className="flex items-end gap-4 mb-2">
+                    <div className="text-5xl font-serif font-bold text-[#6B3E2E]">
+                      {winery.totalScore}
+                    </div>
+                    <div>
+                      <div className="text-lg text-yellow-600">★★★★★</div>
+                      <p className="text-sm text-gray-600">Based on {winery.reviewsCount} reviews</p>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="space-y-3">
-                {[
-                  { stars: 5, count: winery.reviewsDistribution.fiveStar, percentage: ratingPercentages.five },
-                  { stars: 4, count: winery.reviewsDistribution.fourStar, percentage: ratingPercentages.four },
-                  { stars: 3, count: winery.reviewsDistribution.threeStar, percentage: ratingPercentages.three },
-                  { stars: 2, count: winery.reviewsDistribution.twoStar, percentage: ratingPercentages.two },
-                  { stars: 1, count: winery.reviewsDistribution.oneStar, percentage: ratingPercentages.one },
-                ].map((rating) => (
-                  <div key={rating.stars} className="flex items-center gap-3">
-                    <span className="text-sm font-medium text-gray-700 w-12">
-                      {rating.stars} ★
-                    </span>
-                    <div className="flex-grow bg-gray-200 rounded-full h-2">
-                      <div
-                        className="bg-yellow-500 h-2 rounded-full transition"
-                        style={{ width: `${rating.percentage}%` }}
-                      />
+                <div className="space-y-3">
+                  {(winery.reviewsDistribution && winery.reviewsCount && winery.totalScore ? [
+                    { stars: 5, count: winery.reviewsDistribution.fiveStar, percentage: ratingPercentages.five },
+                    { stars: 4, count: winery.reviewsDistribution.fourStar, percentage: ratingPercentages.four },
+                    { stars: 3, count: winery.reviewsDistribution.threeStar, percentage: ratingPercentages.three },
+                    { stars: 2, count: winery.reviewsDistribution.twoStar, percentage: ratingPercentages.two },
+                    { stars: 1, count: winery.reviewsDistribution.oneStar, percentage: ratingPercentages.one },
+                  ] : []).map((rating) => (
+                    <div key={rating.stars} className="flex items-center gap-3">
+                      <span className="text-sm font-medium text-gray-700 w-12">
+                        {rating.stars} ★
+                      </span>
+                      <div className="flex-grow bg-gray-200 rounded-full h-2">
+                        <div
+                          className="bg-yellow-500 h-2 rounded-full transition"
+                          style={{ width: `${rating.percentage}%` }}
+                        />
+                      </div>
+                      <span className="text-sm text-gray-600 w-12 text-right">
+                        {rating.count}
+                      </span>
                     </div>
-                    <span className="text-sm text-gray-600 w-12 text-right">
-                      {rating.count}
-                    </span>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
 
-              <div className="mt-8 pt-6 border-t border-gray-200">
-                <a
-                  href={winery.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[#6B3E2E] hover:underline text-sm font-medium"
-                >
-                  Read all reviews on Google Maps →
-                </a>
+                <div className="mt-8 pt-6 border-t border-gray-200">
+                  <a
+                    href={winery.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#6B3E2E] hover:underline text-sm font-medium"
+                  >
+                    Read all reviews on Google Maps →
+                  </a>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-200">
+                <h2 className="font-serif text-2xl font-bold text-[#6B3E2E] mb-6">
+                  Guest Reviews
+                </h2>
+                <p className="text-gray-600">
+                  Reviews not yet available for this venue.
+                </p>
+              </div>
+            )}
 
             {/* Opening Hours */}
             {winery.openingHours && winery.openingHours.length > 0 && (
@@ -236,25 +250,27 @@ export default async function WineryPage({ params }: { params: Promise<Params> }
               <p className="text-gray-600 text-sm mb-6">
                 Send an inquiry to {winery.title} about your wedding
               </p>
-              <LeadForm wineryName={winery.title} region={winery.city} />
+              <LeadForm wineryName={winery.title} region={winery.city || 'California'} />
             </div>
           </div>
         </div>
       </div>
 
       {/* Similar Venues */}
-      <section className="bg-white py-16 border-t border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="font-serif text-3xl font-bold text-[#6B3E2E] mb-8">
-            More Venues in {winery.city}
-          </h2>
-          <p className="text-gray-600 mb-6">
-            <Link href={`/regions/${slugify(winery.city)}`} className="text-[#6B3E2E] hover:underline font-medium">
-              View all {winery.city} wineries →
-            </Link>
-          </p>
-        </div>
-      </section>
+      {winery.city && (
+        <section className="bg-white py-16 border-t border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="font-serif text-3xl font-bold text-[#6B3E2E] mb-8">
+              More Venues in {winery.city}
+            </h2>
+            <p className="text-gray-600 mb-6">
+              <Link href={`/regions/${slugify(winery.city)}`} className="text-[#6B3E2E] hover:underline font-medium">
+                View all {winery.city} wineries →
+              </Link>
+            </p>
+          </div>
+        </section>
+      )}
     </div>
   );
 }

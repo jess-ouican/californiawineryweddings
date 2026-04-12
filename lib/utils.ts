@@ -18,7 +18,7 @@ export function unslugify(slug: string): string {
 export function getWineriesByRegion(wineries: Winery[], region: string): Winery[] {
   const normalizedRegion = region.toLowerCase().trim();
   return wineries.filter(
-    (w) => w.city.toLowerCase() === normalizedRegion || w.city.toLowerCase().includes(normalizedRegion)
+    (w) => w.city && (w.city.toLowerCase() === normalizedRegion || w.city.toLowerCase().includes(normalizedRegion))
   );
 }
 
