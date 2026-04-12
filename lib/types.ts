@@ -1,3 +1,30 @@
+export interface WineryReview {
+  reviewerId: string;
+  reviewerUrl: string;
+  name: string;
+  reviewerNumberOfReviews: number;
+  isLocalGuide: boolean;
+  reviewerPhotoUrl: string;
+  text: string;
+  textTranslated?: string;
+  publishAt: string;
+  publishedAtDate: string;
+  likesCount: number;
+  reviewId: string;
+  reviewUrl: string;
+  reviewOrigin: string;
+  stars: number;
+  rating: number;
+  responseFromOwnerDate?: string;
+  responseFromOwnerText?: string;
+  reviewImageUrls: string[];
+  reviewContext?: string;
+  reviewDetailedRating?: any;
+  visitedIn?: string;
+  originalLanguage?: string;
+  translatedLanguage?: string;
+}
+
 export interface Winery {
   title: string;
   address: string;
@@ -30,6 +57,8 @@ export interface Winery {
     hours: string;
   }>;
   permanentlyClosed: boolean;
+  weddingConfidence?: 'confirmed' | 'likely' | 'unverified';
+  reviews?: WineryReview[];
 }
 
 export interface LeadFormData {

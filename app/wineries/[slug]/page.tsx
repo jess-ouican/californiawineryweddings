@@ -4,6 +4,8 @@ import { generateWinerySEO, generateWinerySchema } from '@/lib/seo';
 import Link from 'next/link';
 import LeadForm from '@/components/LeadForm';
 import WineryImage from '@/components/WineryImage';
+import VerificationBadge from '@/components/VerificationBadge';
+import WeddingTestimonials from '@/components/WeddingTestimonials';
 import { Metadata } from 'next';
 
 export const revalidate = 3600;
@@ -92,6 +94,11 @@ export default async function WineryPage({ params }: { params: Promise<Params> }
           <h1 className="font-serif text-5xl font-bold text-[#6B3E2E] mb-2">
             {winery.title}
           </h1>
+          {winery.weddingConfidence && (
+            <div className="mb-4">
+              <VerificationBadge confidence={winery.weddingConfidence} size="md" />
+            </div>
+          )}
           <p className="text-gray-700 text-lg">{winery.address}</p>
         </div>
       </section>
@@ -231,6 +238,9 @@ export default async function WineryPage({ params }: { params: Promise<Params> }
                 </div>
               </div>
             )}
+
+            {/* Wedding Testimonials */}
+            <WeddingTestimonials reviews={winery.reviews} />
 
             {winery.permanentlyClosed && (
               <div className="bg-red-50 border border-red-200 p-4 rounded-lg">

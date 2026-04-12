@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Winery } from '@/lib/types';
 import { slugify } from '@/lib/utils';
+import VerificationBadge from './VerificationBadge';
 
 interface WineryCardProps {
   winery: Winery;
@@ -33,6 +34,11 @@ export default function WineryCard({ winery, variant = 'grid' }: WineryCardProps
             <h3 className="font-serif text-lg font-semibold text-[#6B3E2E] hover:text-[#8B5A3C]">
               {winery.title}
             </h3>
+            {winery.weddingConfidence && (
+              <div className="my-1">
+                <VerificationBadge confidence={winery.weddingConfidence} size="sm" />
+              </div>
+            )}
             <p className="text-sm text-gray-600">{winery.city}, California</p>
             <div className="flex items-center gap-2 mt-2">
               <span className={`text-sm font-semibold ${ratingColor}`}>★ {winery.totalScore}</span>
@@ -59,9 +65,16 @@ export default function WineryCard({ winery, variant = 'grid' }: WineryCardProps
           />
         </div>
         <div className="p-4 flex-grow flex flex-col">
-          <h3 className="font-serif text-lg font-semibold text-[#6B3E2E] line-clamp-2 mb-1">
-            {winery.title}
-          </h3>
+          <div className="flex items-start justify-between gap-2 mb-2">
+            <h3 className="font-serif text-lg font-semibold text-[#6B3E2E] line-clamp-2 flex-grow">
+              {winery.title}
+            </h3>
+          </div>
+          {winery.weddingConfidence && (
+            <div className="mb-2">
+              <VerificationBadge confidence={winery.weddingConfidence} size="sm" />
+            </div>
+          )}
           <p className="text-sm text-gray-600 mb-3">{winery.city}, California</p>
           
           <div className="flex items-center gap-2 mb-3 mt-auto">
