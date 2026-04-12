@@ -1,4 +1,4 @@
-import { getTopRegions } from '@/lib/utils';
+import { getAllRegions } from '@/lib/utils';
 import { loadWineries } from '@/lib/data';
 import Link from 'next/link';
 import WineryCard from '@/components/WineryCard';
@@ -7,7 +7,8 @@ export const revalidate = 3600; // ISR: revalidate every hour
 
 export default async function Home() {
   const wineries = await loadWineries();
-  const topRegions = getTopRegions(wineries);
+  const allRegions = getAllRegions(wineries);
+  const topRegions = allRegions.slice(0, 15); // Show top 15 on homepage
   const featuredWineries = wineries.slice(0, 6);
 
   return (

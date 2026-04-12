@@ -86,9 +86,9 @@ export default async function WineryPage({ params }: { params: Promise<Params> }
       {/* Header */}
       <section className="bg-gradient-to-br from-[#F5E6D3] to-[#F0D5B8] py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {winery.city && (
-            <Link href={`/regions/${slugify(winery.city)}`} className="text-[#6B3E2E] hover:underline text-sm mb-4 inline-block">
-              ← Back to {winery.city}
+          {winery.region && (
+            <Link href={`/regions/${slugify(winery.region)}`} className="text-[#6B3E2E] hover:underline text-sm mb-4 inline-block">
+              ← Back to {winery.region}
             </Link>
           )}
           <h1 className="font-serif text-5xl font-bold text-[#6B3E2E] mb-2">
@@ -267,15 +267,15 @@ export default async function WineryPage({ params }: { params: Promise<Params> }
       </div>
 
       {/* Similar Venues */}
-      {winery.city && (
+      {winery.region && (
         <section className="bg-white py-16 border-t border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="font-serif text-3xl font-bold text-[#6B3E2E] mb-8">
-              More Venues in {winery.city}
+              More Venues in {winery.region}
             </h2>
             <p className="text-gray-600 mb-6">
-              <Link href={`/regions/${slugify(winery.city)}`} className="text-[#6B3E2E] hover:underline font-medium">
-                View all {winery.city} wineries →
+              <Link href={`/regions/${slugify(winery.region)}`} className="text-[#6B3E2E] hover:underline font-medium">
+                View all {winery.region} wineries →
               </Link>
             </p>
           </div>

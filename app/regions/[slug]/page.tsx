@@ -1,4 +1,4 @@
-import { getWineriesByRegion, getTopRegions, slugify } from '@/lib/utils';
+import { getWineriesByRegion, getAllRegions, slugify } from '@/lib/utils';
 import { loadWineries } from '@/lib/data';
 import { generateRegionSEO } from '@/lib/seo';
 import WineryCard from '@/components/WineryCard';
@@ -13,8 +13,8 @@ interface Params {
 
 export async function generateStaticParams(): Promise<Params[]> {
   const wineries = await loadWineries();
-  const topRegions = getTopRegions(wineries);
-  return topRegions.map((region) => ({
+  const allRegions = getAllRegions(wineries);
+  return allRegions.map((region) => ({
     slug: region.slug,
   }));
 }
@@ -22,8 +22,8 @@ export async function generateStaticParams(): Promise<Params[]> {
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const resolvedParams = await params;
   const wineries = await loadWineries();
-  const topRegions = getTopRegions(wineries);
-  const region = topRegions.find((r) => r.slug === resolvedParams.slug);
+  const allRegions = getAllRegions(wineries);
+  const region = allRegions.find((r) => r.slug === resolvedParams.slug);
 
   if (!region) {
     return {
@@ -37,8 +37,8 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
 export default async function RegionPage({ params }: { params: Promise<Params> }) {
   const resolvedParams = await params;
   const wineries = await loadWineries();
-  const topRegions = getTopRegions(wineries);
-  const regionData = topRegions.find((r) => r.slug === resolvedParams.slug);
+  const allRegions = getAllRegions(wineries);
+  const regionData = allRegions.find((r) => r.slug === resolvedParams.slug);
 
   if (!regionData) {
     return (
@@ -100,7 +100,7 @@ export default async function RegionPage({ params }: { params: Promise<Params> }
             Explore Other Regions
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {topRegions
+            {getAllRegions(wineries)
               .filter((r) => r.slug !== resolvedParams.slug)
               .slice(0, 8)
               .map((region) => (

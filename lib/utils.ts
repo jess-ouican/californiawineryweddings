@@ -18,16 +18,18 @@ export function unslugify(slug: string): string {
 export function getWineriesByRegion(wineries: Winery[], region: string): Winery[] {
   const normalizedRegion = region.toLowerCase().trim();
   return wineries.filter(
-    (w) => w.city && (w.city.toLowerCase() === normalizedRegion || w.city.toLowerCase().includes(normalizedRegion))
+    (w) => w.region && (w.region.toLowerCase() === normalizedRegion || w.region.toLowerCase().includes(normalizedRegion))
   );
 }
 
-export function getTopRegions(wineries: Winery[]): { region: string; count: number; slug: string }[] {
+export function getAllRegions(wineries: Winery[]): { region: string; count: number; slug: string }[] {
   const regionCounts: Record<string, number> = {};
   
   wineries.forEach((w) => {
-    const city = w.city;
-    regionCounts[city] = (regionCounts[city] || 0) + 1;
+    const region = w.region;
+    if (region) {
+      regionCounts[region] = (regionCounts[region] || 0) + 1;
+    }
   });
 
   return Object.entries(regionCounts)
@@ -36,8 +38,7 @@ export function getTopRegions(wineries: Winery[]): { region: string; count: numb
       count,
       slug: slugify(region),
     }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 15);
+    .sort((a, b) => b.count - a.count);
 }
 
 export function getWineryBySlug(wineries: Winery[], slug: string): Winery | undefined {
