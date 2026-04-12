@@ -19,10 +19,11 @@ export async function generateStaticParams(): Promise<Params[]> {
   }));
 }
 
-export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
+  const resolvedParams = await params;
   const wineries = await loadWineries();
   const topRegions = getTopRegions(wineries);
-  const region = topRegions.find((r) => r.slug === params.slug);
+  const region = topRegions.find((r) => r.slug === resolvedParams.slug);
 
   if (!region) {
     return {
@@ -33,10 +34,11 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return generateRegionSEO(region.region, region.count);
 }
 
-export default async function RegionPage({ params }: { params: Params }) {
+export default async function RegionPage({ params }: { params: Promise<Params> }) {
+  const resolvedParams = await params;
   const wineries = await loadWineries();
   const topRegions = getTopRegions(wineries);
-  const regionData = topRegions.find((r) => r.slug === params.slug);
+  const regionData = topRegions.find((r) => r.slug === resolvedParams.slug);
 
   if (!regionData) {
     return (
@@ -99,7 +101,7 @@ export default async function RegionPage({ params }: { params: Params }) {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {topRegions
-              .filter((r) => r.slug !== params.slug)
+              .filter((r) => r.slug !== resolvedParams.slug)
               .slice(0, 8)
               .map((region) => (
                 <Link key={region.slug} href={`/regions/${region.slug}`}>

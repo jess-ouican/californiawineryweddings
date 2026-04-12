@@ -19,13 +19,14 @@ export async function generateStaticParams(): Promise<Params[]> {
   }));
 }
 
-export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   try {
+    const resolvedParams = await params;
     const wineries = await loadWineries();
-    const winery = getWineryBySlug(wineries, params.slug);
+    const winery = getWineryBySlug(wineries, resolvedParams.slug);
 
     if (!winery) {
-      console.warn(`[generateMetadata] Winery not found for slug: ${params.slug}`);
+      console.warn(`[generateMetadata] Winery not found for slug: ${resolvedParams.slug}`);
       return {
         title: 'Winery Not Found',
       };
@@ -33,16 +34,17 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 
     return generateWinerySEO(winery.title, winery.city, winery.totalScore);
   } catch (error) {
-    console.error(`[generateMetadata] Error loading wineries for ${params.slug}:`, error);
+    console.error(`[generateMetadata] Error loading wineries:`, error);
     return {
       title: 'Error Loading Page',
     };
   }
 }
 
-export default async function WineryPage({ params }: { params: Params }) {
+export default async function WineryPage({ params }: { params: Promise<Params> }) {
+  const resolvedParams = await params;
   const wineries = await loadWineries();
-  const winery = getWineryBySlug(wineries, params.slug);
+  const winery = getWineryBySlug(wineries, resolvedParams.slug);
 
   if (!winery) {
     return (
