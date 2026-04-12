@@ -1,4 +1,4 @@
-import { getWineryBySlug, slugify, isCouplesFavorite } from '@/lib/utils';
+import { getWineryBySlug, slugify, isCouplesFavorite, getWineriesByRegion } from '@/lib/utils';
 import { loadWineries } from '@/lib/data';
 import { generateWinerySEO, generateWinerySchema } from '@/lib/seo';
 import Link from 'next/link';
@@ -7,6 +7,7 @@ import WineryImage from '@/components/WineryImage';
 import VerificationBadge from '@/components/VerificationBadge';
 import CouplesFavoriteBadge from '@/components/CouplesFavoriteBadge';
 import WeddingTestimonials from '@/components/WeddingTestimonials';
+import WineryCard from '@/components/WineryCard';
 import { Metadata } from 'next';
 
 export const revalidate = 3600;
@@ -275,11 +276,41 @@ export default async function WineryPage({ params }: { params: Promise<Params> }
             <h2 className="font-serif text-3xl font-bold text-[#6B3E2E] mb-8">
               More Venues in {winery.region}
             </h2>
-            <p className="text-gray-600 mb-6">
-              <Link href={`/regions/${slugify(winery.region)}`} className="text-[#6B3E2E] hover:underline font-medium">
-                View all {winery.region} wineries →
-              </Link>
-            </p>
+            
+            {(() => {
+              const regionalWineries = getWineriesByRegion(wineries, winery.region || '');
+              const nearbyVenues = regionalWineries
+                .filter(w => w.title !== winery.title) // Exclude current winery
+                .slice(0, 5); // Show up to 5 venues
+
+              if (nearbyVenues.length === 0) {
+                return (
+                  <p className="text-gray-600">
+                    <Link href={`/regions/${slugify(winery.region)}`} className="text-[#6B3E2E] hover:underline font-medium">
+                      View all {winery.region} wineries →
+                    </Link>
+                  </p>
+                );
+              }
+
+              return (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+                    {nearbyVenues.map((venue) => (
+                      <WineryCard key={venue.title} winery={venue} />
+                    ))}
+                  </div>
+                  <div className="text-center pt-4">
+                    <Link 
+                      href={`/regions/${slugify(winery.region)}`} 
+                      className="inline-block text-[#6B3E2E] hover:underline font-medium border-b border-[#6B3E2E]"
+                    >
+                      View all {winery.region} wineries →
+                    </Link>
+                  </div>
+                </>
+              );
+            })()}
           </div>
         </section>
       )}
