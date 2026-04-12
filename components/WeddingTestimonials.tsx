@@ -6,6 +6,18 @@ interface WeddingTestimonialsProps {
   reviews?: WineryReview[];
 }
 
+function formatReviewDate(dateString: string): string {
+  try {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'long',
+    }).format(date);
+  } catch {
+    return dateString;
+  }
+}
+
 export default function WeddingTestimonials({ reviews }: WeddingTestimonialsProps) {
   if (!reviews || reviews.length === 0) {
     return null;
@@ -39,7 +51,7 @@ export default function WeddingTestimonials({ reviews }: WeddingTestimonialsProp
                   {review.name}
                 </p>
                 <p className="text-xs text-gray-600">
-                  {review.publishedAtDate}
+                  {formatReviewDate(review.publishedAtDate)}
                 </p>
               </div>
               <div className="text-right">
