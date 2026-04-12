@@ -1,4 +1,4 @@
-import { loadWineries } from '@/lib/utils';
+import { loadWineries } from '@/lib/data';
 import WineryCard from '@/components/WineryCard';
 
 export const revalidate = 3600;

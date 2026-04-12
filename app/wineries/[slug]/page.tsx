@@ -1,4 +1,5 @@
-import { getWineryBySlug, loadWineries, slugify } from '@/lib/utils';
+import { getWineryBySlug, slugify } from '@/lib/utils';
+import { loadWineries } from '@/lib/data';
 import { generateWinerySEO, generateWinerySchema } from '@/lib/seo';
 import Image from 'next/image';
 import Link from 'next/link';

@@ -1,4 +1,5 @@
-import { getWineriesByRegion, getTopRegions, loadWineries, slugify } from '@/lib/utils';
+import { getWineriesByRegion, getTopRegions, slugify } from '@/lib/utils';
+import { loadWineries } from '@/lib/data';
 import { generateRegionSEO } from '@/lib/seo';
 import WineryCard from '@/components/WineryCard';
 import Link from 'next/link';

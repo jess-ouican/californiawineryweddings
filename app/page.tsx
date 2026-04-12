@@ -1,4 +1,5 @@
-import { getTopRegions, loadWineries } from '@/lib/utils';
+import { getTopRegions } from '@/lib/utils';
+import { loadWineries } from '@/lib/data';
 import Link from 'next/link';
 import WineryCard from '@/components/WineryCard';
 

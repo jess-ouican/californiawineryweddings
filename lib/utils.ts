@@ -15,23 +15,6 @@ export function unslugify(slug: string): string {
     .replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
-export async function loadWineries(): Promise<Winery[]> {
-  try {
-    const response = await fetch(
-      'https://raw.githubusercontent.com/jess-ouican/californiawineryweddings/main/public/data/wineries.json'
-    );
-    if (!response.ok) throw new Error('Failed to load wineries');
-    return await response.json();
-  } catch {
-    // Fallback for local development
-    const fs = await import('fs');
-    const path = await import('path');
-    const dataPath = path.join(process.cwd(), 'public/data/wineries.json');
-    const data = fs.readFileSync(dataPath, 'utf-8');
-    return JSON.parse(data);
-  }
-}
-
 export function getWineriesByRegion(wineries: Winery[], region: string): Winery[] {
   const normalizedRegion = region.toLowerCase().trim();
   return wineries.filter(
