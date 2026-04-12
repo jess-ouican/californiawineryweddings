@@ -29,6 +29,7 @@ export interface Winery {
   title: string;
   address: string;
   city: string;
+  county: string;
   region: string;
   postalCode: string;
   state: string;
