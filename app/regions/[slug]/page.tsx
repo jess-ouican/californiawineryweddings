@@ -1,4 +1,4 @@
-import { getWineriesByRegion, getAllRegions, slugify } from '@/lib/utils';
+import { getWineriesByRegion, getAllRegions, slugify, isCouplesFavorite } from '@/lib/utils';
 import { loadWineries } from '@/lib/data';
 import { generateRegionSEO } from '@/lib/seo';
 import WineryCard from '@/components/WineryCard';
@@ -52,6 +52,7 @@ export default async function RegionPage({ params }: { params: Promise<Params> }
   }
 
   const regionWineries = getWineriesByRegion(wineries, regionData.region);
+  const couplesFavoritesInRegion = regionWineries.filter(isCouplesFavorite);
 
   return (
     <div>
@@ -69,6 +70,26 @@ export default async function RegionPage({ params }: { params: Promise<Params> }
           </p>
         </div>
       </section>
+
+      {/* Couples' Favorites Section */}
+      {couplesFavoritesInRegion.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 border-b border-gray-200">
+          <div className="mb-8">
+            <h2 className="font-serif text-3xl font-bold text-[#6B3E2E] mb-2">
+              ⭐ Couples' Favorites
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Highly-rated venues loved by couples — {couplesFavoritesInRegion.length} venues in {regionData.region}
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {couplesFavoritesInRegion.map((winery) => (
+                <WineryCard key={winery.placeId} winery={winery} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Wineries Grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

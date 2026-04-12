@@ -1,10 +1,11 @@
-import { getWineryBySlug, slugify } from '@/lib/utils';
+import { getWineryBySlug, slugify, isCouplesFavorite } from '@/lib/utils';
 import { loadWineries } from '@/lib/data';
 import { generateWinerySEO, generateWinerySchema } from '@/lib/seo';
 import Link from 'next/link';
 import LeadForm from '@/components/LeadForm';
 import WineryImage from '@/components/WineryImage';
 import VerificationBadge from '@/components/VerificationBadge';
+import CouplesFavoriteBadge from '@/components/CouplesFavoriteBadge';
 import WeddingTestimonials from '@/components/WeddingTestimonials';
 import { Metadata } from 'next';
 
@@ -94,11 +95,12 @@ export default async function WineryPage({ params }: { params: Promise<Params> }
           <h1 className="font-serif text-5xl font-bold text-[#6B3E2E] mb-2">
             {winery.title}
           </h1>
-          {winery.weddingConfidence && (
-            <div className="mb-4">
+          <div className="mb-4 space-y-2">
+            {isCouplesFavorite(winery) && <CouplesFavoriteBadge />}
+            {winery.weddingConfidence && (
               <VerificationBadge confidence={winery.weddingConfidence} size="md" />
-            </div>
-          )}
+            )}
+          </div>
           <p className="text-gray-700 text-lg">{winery.address}</p>
         </div>
       </section>

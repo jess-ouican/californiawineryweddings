@@ -65,3 +65,12 @@ export function formatDate(dateString: string): string {
     return dateString;
   }
 }
+
+export function isCouplesFavorite(winery: Winery): boolean {
+  return (
+    winery.weddingConfidence === 'confirmed' &&
+    (winery.totalScore || 0) >= 4.7 &&
+    (winery.reviewsCount || 0) >= 50
+  );
+}
+
