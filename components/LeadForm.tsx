@@ -33,12 +33,21 @@ export default function LeadForm({ wineryName, region }: LeadFormProps) {
     setLoading(true);
 
     try {
-      // TODO: Connect to Airtable or lead capture service
-      console.log('Lead submitted:', formData);
-      
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+      const response = await fetch('/api/inquiry', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          wineryName,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit inquiry');
+      }
+
       setSubmitted(true);
       setTimeout(() => setSubmitted(false), 3000);
       setFormData({
