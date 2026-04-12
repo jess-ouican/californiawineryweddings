@@ -1,0 +1,8 @@
+# Don't ignore the data file - it's needed for building
+!public/data/wineries.json
+
+# Standard ignores
+node_modules
+.git
+.env.local
+.env.*.local
