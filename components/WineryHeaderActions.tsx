@@ -42,19 +42,17 @@ export default function WineryHeaderActions({
 
   if (isVerified) {
     return (
-      <div className="flex items-center gap-2">
-        <VerifiedOwnerBadge />
-      </div>
+      <VerifiedOwnerBadge size="md" />
     );
   }
 
   return (
     <Link
       href={`/claim/${slug}`}
-      className="inline-flex items-center gap-2 px-4 py-2 bg-[#6B3E2E] hover:bg-[#5a3422] text-white rounded-lg transition text-sm font-semibold"
+      className="inline-flex items-center gap-2 px-6 py-3 bg-[#6B3E2E] hover:bg-[#5a3422] text-white rounded-lg transition text-base font-semibold"
     >
       <svg
-        className="w-4 h-4"
+        className="w-5 h-5"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"

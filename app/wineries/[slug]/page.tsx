@@ -101,24 +101,30 @@ export default async function WineryPage({ params }: { params: Promise<Params> }
       {/* Header */}
       <section className="bg-gradient-to-br from-[#F5E6D3] to-[#F0D5B8] py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {winery.region && (
-            <Link href={`/regions/${slugify(winery.region)}`} className="text-[#6B3E2E] hover:underline text-sm mb-4 inline-block">
-              ← Back to {winery.region}
-            </Link>
-          )}
-          <h1 className="font-serif text-5xl font-bold text-[#6B3E2E] mb-2">
-            {winery.title}
-          </h1>
-          <div className="mb-4 space-y-2">
-            {isCouplesFavorite(winery) && <CouplesFavoriteBadge />}
-            {winery.weddingConfidence && (
-              <VerificationBadge confidence={winery.weddingConfidence} size="md" />
-            )}
-            <WineryHeaderActions 
-              wineryTitle={winery.title} 
-              placeId={winery.placeId} 
-              slug={resolvedParams.slug} 
-            />
+          <div className="flex justify-between items-start mb-6">
+            <div className="flex-grow">
+              {winery.region && (
+                <Link href={`/regions/${slugify(winery.region)}`} className="text-[#6B3E2E] hover:underline text-sm mb-4 inline-block">
+                  ← Back to {winery.region}
+                </Link>
+              )}
+              <h1 className="font-serif text-5xl font-bold text-[#6B3E2E] mb-4">
+                {winery.title}
+              </h1>
+              <div className="mb-4 space-y-2">
+                {isCouplesFavorite(winery) && <CouplesFavoriteBadge />}
+                {winery.weddingConfidence && (
+                  <VerificationBadge confidence={winery.weddingConfidence} size="md" />
+                )}
+              </div>
+            </div>
+            <div className="flex-shrink-0 ml-4">
+              <WineryHeaderActions 
+                wineryTitle={winery.title} 
+                placeId={winery.placeId} 
+                slug={resolvedParams.slug} 
+              />
+            </div>
           </div>
           <p className="text-gray-700 text-lg">{winery.address}</p>
         </div>
