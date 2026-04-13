@@ -288,8 +288,11 @@ export async function getVenueDetails(placeId: string): Promise<VenueDetails | n
  */
 export async function saveVenueDetails(data: VenueDetails): Promise<void> {
   try {
+    console.log('[AIRTABLE] Saving venue details for placeId:', data.PlaceId);
+    console.log('[AIRTABLE] Input data fields:', Object.keys(data));
+    
     const existing = await venueDetailsTable
-      .select({ filterByFormula: `{PlaceId} = "${data.PlaceId}"` })
+      .select({ filterByFormula: `{PlaceId} = \"${data.PlaceId}\"` })
       .firstPage();
 
     // Build the fields object — strip undefined, cast to Airtable-compatible type
@@ -304,13 +307,21 @@ export async function saveVenueDetails(data: VenueDetails): Promise<void> {
       }
     }
 
+    console.log('[AIRTABLE] Fields to save:', Object.keys(fields));
+    console.log('[AIRTABLE] Found existing record:', existing.length > 0 ? existing[0].id : 'none');
+
     if (existing.length > 0) {
+      console.log('[AIRTABLE] Updating existing record:', existing[0].id);
       await venueDetailsTable.update(existing[0].id, fields as Partial<FieldSet>);
+      console.log('[AIRTABLE] ✓ Updated successfully');
     } else {
+      console.log('[AIRTABLE] Creating new record');
       await venueDetailsTable.create(fields as Partial<FieldSet>);
+      console.log('[AIRTABLE] ✓ Created successfully');
     }
   } catch (error) {
-    console.error('Error saving venue details:', error);
+    console.error('[AIRTABLE] ✗ Error saving venue details:', error instanceof Error ? error.message : error);
+    console.error('[AIRTABLE] Full error:', error);
     throw error;
   }
 }

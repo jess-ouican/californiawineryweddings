@@ -47,18 +47,29 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { slug, ...venueData } = body;
 
+    console.log('[DASHBOARD VENUE-DETAILS] POST request:', { slug, fieldCount: Object.keys(venueData).length });
+
     if (!slug) {
       return NextResponse.json({ message: 'Missing slug' }, { status: 400 });
     }
 
     const listing = await validateOwner(request, slug);
     if (!listing) {
+      console.log('[DASHBOARD VENUE-DETAILS] Unauthorized - no valid token');
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
+
+    console.log('[DASHBOARD VENUE-DETAILS] Owner validated:', { placeId: listing.fields.PlaceId });
 
     // Load winery to get name
     const wineries = await loadWineries();
     const winery = getWineryBySlug(wineries, slug);
+
+    console.log('[DASHBOARD VENUE-DETAILS] Saving to Airtable:', {
+      placeId: listing.fields.PlaceId,
+      winery: winery?.title || listing.fields.WineryName,
+      fields: Object.keys(venueData),
+    });
 
     await saveVenueDetails({
       PlaceId: listing.fields.PlaceId,
@@ -66,9 +77,14 @@ export async function POST(request: NextRequest) {
       ...venueData,
     });
 
+    console.log('[DASHBOARD VENUE-DETAILS] ✓ Saved successfully');
     return NextResponse.json({ message: 'Saved successfully' });
   } catch (error) {
-    console.error('[DASHBOARD VENUE-DETAILS] Error:', error);
-    return NextResponse.json({ message: 'Failed to save.' }, { status: 500 });
+    console.error('[DASHBOARD VENUE-DETAILS] ✗ Error:', error instanceof Error ? error.message : error);
+    console.error('[DASHBOARD VENUE-DETAILS] Full error:', error);
+    return NextResponse.json(
+      { message: error instanceof Error ? error.message : 'Failed to save.' },
+      { status: 500 }
+    );
   }
 }
