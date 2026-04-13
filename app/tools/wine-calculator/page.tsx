@@ -21,7 +21,6 @@ export default function WineCalculator() {
   const [whitePercent, setWhitePercent] = useState(40);
   const [sparklingPercent, setSparklingPercent] = useState(20);
   const [result, setResult] = useState<CalculationResult | null>(null);
-  const [lastTouchedType, setLastTouchedType] = useState<'red' | 'white' | 'sparkling'>('red');
 
   // Drinking rates (glasses per person per hour)
   const drinkingRates = {
@@ -61,78 +60,78 @@ export default function WineCalculator() {
     calculate();
   }, [guests, duration, drinkingLevel, redPercent, whitePercent, sparklingPercent]);
 
-  const handleWineMixChange = (type: 'red' | 'white' | 'sparkling', newValue: number) => {
+  /**
+   * Auto-distribute sliders to always total 100%.
+   * When one slider changes, the other two are adjusted proportionally.
+   */
+  const handleWineMixChange = (changedType: 'red' | 'white' | 'sparkling', newValue: number) => {
     // Clamp the value between 0 and 100
-    newValue = Math.min(100, Math.max(0, newValue));
-    
-    // Update the touched slider and track which one was changed
-    setLastTouchedType(type);
-    
-    let updatedRed = redPercent;
-    let updatedWhite = whitePercent;
-    let updatedSparkling = sparklingPercent;
-    
-    // Set the new value for the touched slider
-    if (type === 'red') {
-      updatedRed = newValue;
-    } else if (type === 'white') {
-      updatedWhite = newValue;
-    } else {
-      updatedSparkling = newValue;
-    }
-    
-    // Calculate remaining percentage to distribute
-    const touchedValue = newValue;
-    const remainingPercent = 100 - touchedValue;
-    
-    // Get the two untouched sliders
-    const others = type === 'red' 
-      ? [{ type: 'white' as const, value: whitePercent }, { type: 'sparkling' as const, value: sparklingPercent }]
-      : type === 'white'
-      ? [{ type: 'red' as const, value: redPercent }, { type: 'sparkling' as const, value: sparklingPercent }]
-      : [{ type: 'red' as const, value: redPercent }, { type: 'white' as const, value: whitePercent }];
-    
-    // Calculate proportional split of remaining percentage
-    const othersTotal = others[0].value + others[1].value;
-    
-    if (othersTotal === 0) {
-      // If both others are 0, split remaining equally
-      updatedRed = type === 'red' ? newValue : remainingPercent / 2;
-      updatedWhite = type === 'white' ? newValue : (type === 'red' ? remainingPercent / 2 : remainingPercent / 2);
-      updatedSparkling = type === 'sparkling' ? newValue : (type === 'red' ? remainingPercent / 2 : (type === 'white' ? remainingPercent / 2 : remainingPercent / 2));
-    } else {
-      // Distribute remaining percentage proportionally
-      const ratio = remainingPercent / othersTotal;
-      
-      others.forEach(other => {
-        const proportionalValue = Math.round(other.value * ratio);
-        if (other.type === 'red') {
-          updatedRed = proportionalValue;
-        } else if (other.type === 'white') {
-          updatedWhite = proportionalValue;
-        } else {
-          updatedSparkling = proportionalValue;
-        }
+    newValue = Math.max(0, Math.min(100, newValue));
+
+    // Get the current percentages
+    const current = {
+      red: redPercent,
+      white: whitePercent,
+      sparkling: sparklingPercent,
+    };
+
+    // Update the changed slider
+    current[changedType] = newValue;
+
+    // Calculate how much the other two sliders need to share
+    const remainingPercent = 100 - newValue;
+
+    // Get the two unchanged sliders and their current values
+    const otherTypes = (['red', 'white', 'sparkling'] as const).filter((t) => t !== changedType);
+    const currentOthersTotal = otherTypes.reduce((sum, t) => sum + current[t], 0);
+
+    // Redistribute the remaining percentage proportionally based on current values
+    let newRed = changedType === 'red' ? newValue : current.red;
+    let newWhite = changedType === 'white' ? newValue : current.white;
+    let newSparkling = changedType === 'sparkling' ? newValue : current.sparkling;
+
+    if (currentOthersTotal === 0) {
+      // If both others are zero, split remaining equally
+      const eachOther = Math.round(remainingPercent / 2);
+      otherTypes.forEach((t) => {
+        current[t] = eachOther;
       });
+      newRed = current.red;
+      newWhite = current.white;
+      newSparkling = current.sparkling;
+    } else {
+      // Distribute proportionally
+      const ratio = remainingPercent / currentOthersTotal;
+      otherTypes.forEach((t) => {
+        current[t] = Math.round(current[t] * ratio);
+      });
+      newRed = current.red;
+      newWhite = current.white;
+      newSparkling = current.sparkling;
     }
-    
-    // Ensure total is exactly 100% by adjusting rounding errors
-    const total = updatedRed + updatedWhite + updatedSparkling;
-    if (total !== 100) {
-      const diff = 100 - total;
-      if (type === 'red') {
-        updatedWhite += diff;
-      } else if (type === 'white') {
-        updatedSparkling += diff;
+
+    // Fix any rounding errors to ensure total is exactly 100%
+    const total = newRed + newWhite + newSparkling;
+    const diff = 100 - total;
+
+    if (diff !== 0) {
+      if (changedType === 'red') {
+        newWhite += diff;
+      } else if (changedType === 'white') {
+        newSparkling += diff;
       } else {
-        updatedRed += diff;
+        newRed += diff;
       }
     }
-    
-    // Update all states
-    setRedPercent(updatedRed);
-    setWhitePercent(updatedWhite);
-    setSparklingPercent(updatedSparkling);
+
+    // Ensure all values are non-negative
+    newRed = Math.max(0, newRed);
+    newWhite = Math.max(0, newWhite);
+    newSparkling = Math.max(0, newSparkling);
+
+    setRedPercent(newRed);
+    setWhitePercent(newWhite);
+    setSparklingPercent(newSparkling);
   };
 
   return (
@@ -232,75 +231,71 @@ export default function WineCalculator() {
                 {/* Wine Mix */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-3">
-                    Wine Mix (must total 100%)
+                    Wine Mix
                   </label>
-                  <div className="space-y-3">
+                  <div className="bg-green-50 border border-green-200 p-3 rounded mb-4">
+                    <p className="text-sm font-semibold text-green-700">
+                      Total: {redPercent + whitePercent + sparklingPercent}% ✓
+                    </p>
+                  </div>
+                  <div className="space-y-4">
                     {/* Red */}
-                    <div className="flex items-center gap-3">
-                      <div className="flex-1">
-                        <div className="flex justify-between mb-1">
-                          <span className="text-sm font-medium text-gray-700">Red</span>
-                          <span className="text-sm font-bold text-[#6B3E2E]">{redPercent}%</span>
-                        </div>
-                        <input
-                          type="range"
-                          min="0"
-                          max="100"
-                          value={redPercent}
-                          onChange={(e) => handleWineMixChange('red', Number(e.target.value))}
-                          className="w-full h-2 bg-red-200 rounded-lg appearance-none cursor-pointer"
-                          style={{
-                            background: `linear-gradient(to right, #8B2E2E 0%, #8B2E2E ${redPercent}%, #e5e7eb ${redPercent}%, #e5e7eb 100%)`,
-                          }}
-                        />
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span className="text-sm font-medium text-gray-700">Red</span>
+                        <span className="text-sm font-bold text-[#6B3E2E]">{redPercent}%</span>
                       </div>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={redPercent}
+                        onChange={(e) => handleWineMixChange('red', Number(e.target.value))}
+                        className="w-full h-2 rounded-lg appearance-none cursor-pointer"
+                        style={{
+                          background: `linear-gradient(to right, #8B2E2E 0%, #8B2E2E ${redPercent}%, #e5e7eb ${redPercent}%, #e5e7eb 100%)`,
+                        }}
+                      />
                     </div>
 
                     {/* White */}
-                    <div className="flex items-center gap-3">
-                      <div className="flex-1">
-                        <div className="flex justify-between mb-1">
-                          <span className="text-sm font-medium text-gray-700">White</span>
-                          <span className="text-sm font-bold text-[#6B3E2E]">{whitePercent}%</span>
-                        </div>
-                        <input
-                          type="range"
-                          min="0"
-                          max="100"
-                          value={whitePercent}
-                          onChange={(e) => handleWineMixChange('white', Number(e.target.value))}
-                          className="w-full h-2 bg-yellow-200 rounded-lg appearance-none cursor-pointer"
-                          style={{
-                            background: `linear-gradient(to right, #D4AF37 0%, #D4AF37 ${whitePercent}%, #e5e7eb ${whitePercent}%, #e5e7eb 100%)`,
-                          }}
-                        />
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span className="text-sm font-medium text-gray-700">White</span>
+                        <span className="text-sm font-bold text-[#6B3E2E]">{whitePercent}%</span>
                       </div>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={whitePercent}
+                        onChange={(e) => handleWineMixChange('white', Number(e.target.value))}
+                        className="w-full h-2 rounded-lg appearance-none cursor-pointer"
+                        style={{
+                          background: `linear-gradient(to right, #D4AF37 0%, #D4AF37 ${whitePercent}%, #e5e7eb ${whitePercent}%, #e5e7eb 100%)`,
+                        }}
+                      />
                     </div>
 
                     {/* Sparkling */}
-                    <div className="flex items-center gap-3">
-                      <div className="flex-1">
-                        <div className="flex justify-between mb-1">
-                          <span className="text-sm font-medium text-gray-700">Sparkling</span>
-                          <span className="text-sm font-bold text-[#6B3E2E]">{sparklingPercent}%</span>
-                        </div>
-                        <input
-                          type="range"
-                          min="0"
-                          max="100"
-                          value={sparklingPercent}
-                          onChange={(e) => handleWineMixChange('sparkling', Number(e.target.value))}
-                          className="w-full h-2 bg-amber-200 rounded-lg appearance-none cursor-pointer"
-                          style={{
-                            background: `linear-gradient(to right, #D4A574 0%, #D4A574 ${sparklingPercent}%, #e5e7eb ${sparklingPercent}%, #e5e7eb 100%)`,
-                          }}
-                        />
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span className="text-sm font-medium text-gray-700">Sparkling</span>
+                        <span className="text-sm font-bold text-[#6B3E2E]">{sparklingPercent}%</span>
                       </div>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={sparklingPercent}
+                        onChange={(e) => handleWineMixChange('sparkling', Number(e.target.value))}
+                        className="w-full h-2 rounded-lg appearance-none cursor-pointer"
+                        style={{
+                          background: `linear-gradient(to right, #D4A574 0%, #D4A574 ${sparklingPercent}%, #e5e7eb ${sparklingPercent}%, #e5e7eb 100%)`,
+                        }}
+                      />
                     </div>
                   </div>
-                  <p className="text-xs text-gray-500 mt-2">
-                    Current total: {redPercent + whitePercent + sparklingPercent}%
-                  </p>
                 </div>
               </div>
 

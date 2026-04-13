@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Metadata } from 'next';
 import fs from 'fs';
 import path from 'path';
+import BlogContent from '@/components/BlogContent';
 
 interface BlogPost {
   slug: string;
@@ -125,10 +126,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
       {/* Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <article
-          className="prose prose-lg max-w-none"
-          dangerouslySetInnerHTML={{ __html: post.content }}
-        />
+        <BlogContent content={post.content} />
       </div>
 
       {/* Related Posts CTA */}

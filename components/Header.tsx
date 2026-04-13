@@ -43,6 +43,12 @@ export default function Header() {
             >
               Blog
             </Link>
+            <Link
+              href="/about"
+              className="text-gray-700 hover:text-[#6B3E2E] font-medium text-sm transition"
+            >
+              About
+            </Link>
           </nav>
         </div>
       </div>
