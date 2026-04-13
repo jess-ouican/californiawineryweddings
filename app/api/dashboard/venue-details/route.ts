@@ -71,6 +71,10 @@ export async function POST(request: NextRequest) {
       fields: Object.keys(venueData),
     });
 
+    // Convert WheelchairAccessible to boolean
+    if (venueData.WheelchairAccessible !== undefined) {
+      venueData.WheelchairAccessible = Boolean(venueData.WheelchairAccessible);
+    }
     await saveVenueDetails({
       PlaceId: listing.fields.PlaceId,
       WineryName: winery?.title || listing.fields.WineryName,
