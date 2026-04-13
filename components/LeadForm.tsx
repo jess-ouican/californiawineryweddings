@@ -6,9 +6,10 @@ import { LeadFormData } from '@/lib/types';
 interface LeadFormProps {
   wineryName?: string;
   region?: string;
+  placeId?: string;
 }
 
-export default function LeadForm({ wineryName, region }: LeadFormProps) {
+export default function LeadForm({ wineryName, region, placeId }: LeadFormProps) {
   const [formData, setFormData] = useState<LeadFormData>({
     firstName: '',
     lastName: '',
@@ -41,6 +42,7 @@ export default function LeadForm({ wineryName, region }: LeadFormProps) {
         body: JSON.stringify({
           ...formData,
           wineryName,
+          placeId,
         }),
       });
 

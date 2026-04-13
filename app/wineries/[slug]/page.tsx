@@ -281,7 +281,7 @@ export default async function WineryPage({ params }: { params: Promise<Params> }
               <p className="text-gray-600 text-sm mb-6">
                 Send an inquiry to {winery.title} about your wedding
               </p>
-              <LeadForm wineryName={winery.title} region={winery.city || 'California'} />
+              <LeadForm wineryName={winery.title} region={winery.city || 'California'} placeId={winery.placeId} />
             </div>
             
             <WeddingPlanningToolsWidget />

@@ -129,3 +129,26 @@ export async function getVerifiedClaimedPlaceIds(): Promise<string[]> {
     return [];
   }
 }
+
+/**
+ * Get owner email by placeId (returns email only if verified)
+ */
+export async function getOwnerEmailByPlaceId(placeId: string): Promise<string | null> {
+  try {
+    const records = await claimedListingsTable
+      .select({
+        filterByFormula: `AND({PlaceId} = "${placeId}", {Verified} = TRUE())`,
+      })
+      .firstPage();
+
+    if (records.length === 0) {
+      return null;
+    }
+
+    const fields = records[0].fields as ClaimedListing['fields'];
+    return fields.OwnerEmail;
+  } catch (error) {
+    console.error('Error fetching owner email:', error);
+    return null;
+  }
+}
