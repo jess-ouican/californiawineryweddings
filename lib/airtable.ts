@@ -215,9 +215,13 @@ export interface VenueDetails {
   // Capacity
   MinGuests?: number;
   MaxGuests?: number;
+  IndoorCeremony?: number;
   IndoorCeremonyCapacity?: number;
+  OutdoorCeremony?: number;
   OutdoorCeremonyCapacity?: number;
+  IndoorReception?: number;
   IndoorReceptionCapacity?: number;
+  OutdoorReception?: number;
   OutdoorReceptionCapacity?: number;
   // Venue Details
   Catering?: string;
