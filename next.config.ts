@@ -4,6 +4,13 @@ const nextConfig: NextConfig = {
   // Optimize for static generation
   staticPageGenerationTimeout: 300,
   
+  // Expose environment variables needed during build
+  env: {
+    AIRTABLE_API_KEY: process.env.AIRTABLE_API_KEY,
+    AIRTABLE_BASE_ID: process.env.AIRTABLE_BASE_ID,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
+  },
+
   // Configure Image optimization for external images
   images: {
     remotePatterns: [

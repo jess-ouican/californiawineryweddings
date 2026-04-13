@@ -6,6 +6,12 @@ import cryptoRandomString from 'crypto-random-string';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 function validateDomainEmail(email: string): boolean {
+  // Test bypass: allow test@californiawineryweddings.com for internal testing
+  if (email.toLowerCase() === 'test@californiawineryweddings.com') {
+    console.log('[CLAIM] Test bypass active: test@californiawineryweddings.com');
+    return true;
+  }
+
   // Must have a domain (not gmail, yahoo, etc.)
   const blockedDomains = [
     'gmail.com',
