@@ -5,9 +5,10 @@ interface BlogContentProps {
 }
 
 export default function BlogContent({ content }: BlogContentProps) {
-  // Inject CSS for blog links before rendering
+  // Inject inline styles for all links
+  // Handle both escaped and unescaped quotes
   const styledContent = content.replace(
-    /<a href=/g,
+    /<a\s+href=/g,
     '<a style="color: #8B5A3C; text-decoration: underline;" href='
   );
 
@@ -20,7 +21,7 @@ export default function BlogContent({ content }: BlogContentProps) {
                  [&_strong]:font-semibold [&_strong]:text-gray-800
                  [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4
                  [&_li]:text-gray-700 [&_li]:mb-2
-                 [&_a:hover]:text-[#6B3E2E]"
+                 [&_a]:hover:text-[#6B3E2E]"
       dangerouslySetInnerHTML={{ __html: styledContent }}
     />
   );
