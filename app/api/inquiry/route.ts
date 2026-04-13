@@ -43,10 +43,19 @@ This inquiry was submitted through californiawineryweddings.com
     // Get owner email if winery is claimed and verified
     let ownerEmail: string | null = null;
     if (placeId) {
+      console.log('[INQUIRY] Checking if winery is verified:', { placeId, wineryName });
       ownerEmail = await getOwnerEmailByPlaceId(placeId);
+      if (ownerEmail) {
+        console.log('[INQUIRY] ✓ Verified owner found:', ownerEmail);
+      } else {
+        console.log('[INQUIRY] • Winery not verified or no owner email found');
+      }
+    } else {
+      console.log('[INQUIRY] • No placeId provided');
     }
 
     // Send email to primary inbox
+    console.log('[INQUIRY] Sending to primary inbox: hello@californiawineryweddings.com');
     const primaryEmailResult = await resend.emails.send({
       from: 'hello@send.californiawineryweddings.com',
       to: 'hello@californiawineryweddings.com',
@@ -85,15 +94,17 @@ This inquiry was submitted through californiawineryweddings.com
     });
 
     if (primaryEmailResult.error) {
-      console.error('Resend API error (primary):', primaryEmailResult.error);
+      console.error('[INQUIRY] ✗ Resend API error (primary):', primaryEmailResult.error);
       return NextResponse.json(
         { error: 'Failed to send inquiry email' },
         { status: 500 }
       );
     }
+    console.log('[INQUIRY] ✓ Primary email sent:', primaryEmailResult.data?.id);
 
     // If winery is claimed and verified, also send to owner
     if (ownerEmail) {
+      console.log('[INQUIRY] Sending to verified owner:', ownerEmail);
       const ownerEmailResult = await resend.emails.send({
         from: 'hello@send.californiawineryweddings.com',
         to: ownerEmail,
@@ -132,11 +143,11 @@ This inquiry was submitted through californiawineryweddings.com
       });
 
       if (ownerEmailResult.error) {
-        console.error('Resend API error (owner):', ownerEmailResult.error);
+        console.error('[INQUIRY] ✗ Resend API error (owner):', ownerEmailResult.error);
         // Don't fail the entire request if owner email fails
         // Primary email already sent successfully
       } else {
-        console.log('[INQUIRY] ✓ Email sent to owner:', ownerEmail);
+        console.log('[INQUIRY] ✓ Owner email sent:', ownerEmailResult.data?.id);
       }
     }
 
@@ -150,7 +161,10 @@ This inquiry was submitted through californiawineryweddings.com
       { status: 201 }
     );
   } catch (error) {
-    console.error('API route error:', error);
+    console.error('[INQUIRY] ✗ API route error:', error instanceof Error ? error.message : error);
+    if (error instanceof Error) {
+      console.error('[INQUIRY] Stack trace:', error.stack);
+    }
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
