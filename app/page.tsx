@@ -3,7 +3,7 @@ import { loadWineries } from '@/lib/data';
 import Link from 'next/link';
 import WineryCard from '@/components/WineryCard';
 
-export const revalidate = 3600; // ISR: revalidate every hour
+export const revalidate = 60; // ISR: revalidate every minute
 
 export default async function Home() {
   const wineries = await loadWineries();
