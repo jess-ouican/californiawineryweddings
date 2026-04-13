@@ -10,9 +10,10 @@ import CouplesFavoriteBadge from './CouplesFavoriteBadge';
 interface WineryCardProps {
   winery: Winery;
   variant?: 'grid' | 'list';
+  isVerifiedOwner?: boolean;
 }
 
-export default function WineryCard({ winery, variant = 'grid' }: WineryCardProps) {
+export default function WineryCard({ winery, variant = 'grid', isVerifiedOwner = false }: WineryCardProps) {
   const slug = slugify(winery.title);
   const ratingColor = winery.totalScore >= 4.7 ? 'text-yellow-600' : winery.totalScore >= 4.3 ? 'text-yellow-500' : 'text-gray-600';
 
@@ -54,7 +55,7 @@ export default function WineryCard({ winery, variant = 'grid' }: WineryCardProps
 
   return (
     <Link href={`/wineries/${slug}`}>
-      <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition cursor-pointer h-full flex flex-col">
+      <div className={`bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition cursor-pointer h-full flex flex-col ${isVerifiedOwner ? 'border-l-4 border-l-green-600' : ''}`}>
         <div className="relative w-full h-48 bg-gray-200">
           <Image
             src={winery.imageUrl}
@@ -73,6 +74,12 @@ export default function WineryCard({ winery, variant = 'grid' }: WineryCardProps
             </h3>
           </div>
           <div className="mb-2 space-y-1">
+            {isVerifiedOwner && (
+              <div className="inline-flex items-center gap-1 bg-green-50 border border-green-200 text-green-700 px-2 py-1 rounded text-xs font-medium">
+                <span>✓</span>
+                <span>Verified Owner</span>
+              </div>
+            )}
             {isCouplesFavorite(winery) && <CouplesFavoriteBadge />}
             {winery.weddingConfidence && (
               <VerificationBadge confidence={winery.weddingConfidence} size="sm" />

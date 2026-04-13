@@ -3,7 +3,6 @@ import { loadWineries } from '@/lib/data';
 import { generateRegionSEO, generateBreadcrumbSchema, generateFAQSchema } from '@/lib/seo';
 import { getVerifiedClaimedPlaceIds } from '@/lib/airtable';
 import WineryCard from '@/components/WineryCard';
-import VerifiedClaimedWineries from '@/components/VerifiedClaimedWineries';
 import RegionWeatherWidget from '@/components/RegionWeatherWidget';
 import Link from 'next/link';
 import { Metadata } from 'next';
@@ -57,6 +56,12 @@ export default async function RegionPage({ params }: { params: Promise<Params> }
   const regionWineries = getWineriesByRegion(wineries, regionData.region);
   const couplesFavoritesInRegion = regionWineries.filter(isCouplesFavorite);
   const verifiedPlaceIds = await getVerifiedClaimedPlaceIds();
+
+  // Sort wineries: verified owners first, then the rest
+  const sortedWineries = [
+    ...regionWineries.filter((w) => verifiedPlaceIds.includes(w.placeId)),
+    ...regionWineries.filter((w) => !verifiedPlaceIds.includes(w.placeId)),
+  ];
   
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: 'Home', url: 'https://www.californiawineryweddings.com' },
@@ -107,22 +112,23 @@ export default async function RegionPage({ params }: { params: Promise<Params> }
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {couplesFavoritesInRegion.map((winery) => (
-                <WineryCard key={winery.placeId} winery={winery} />
+                <WineryCard 
+                  key={winery.placeId} 
+                  winery={winery}
+                  isVerifiedOwner={verifiedPlaceIds.includes(winery.placeId)}
+                />
               ))}
             </div>
           </div>
         </section>
       )}
 
-      {/* Verified Claimed Wineries Section */}
-      <VerifiedClaimedWineries verifiedPlaceIds={verifiedPlaceIds} allWineries={regionWineries} />
-
       {/* Weather Guide Widget */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 border-b border-gray-200">
         <RegionWeatherWidget regionName={regionData.region} />
       </section>
 
-      {/* Wineries Grid */}
+      {/* Unified Wineries Grid (verified owners sorted first) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-8">
           <p className="text-gray-600 mb-6">
@@ -131,8 +137,12 @@ export default async function RegionPage({ params }: { params: Promise<Params> }
 
           {regionWineries.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {regionWineries.map((winery) => (
-                <WineryCard key={winery.placeId} winery={winery} />
+              {sortedWineries.map((winery) => (
+                <WineryCard 
+                  key={winery.placeId} 
+                  winery={winery}
+                  isVerifiedOwner={verifiedPlaceIds.includes(winery.placeId)}
+                />
               ))}
             </div>
           ) : (
