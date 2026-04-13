@@ -113,21 +113,17 @@ export default function DashboardForm({ slug, placeId, initialData }: Props) {
   // Capacity
   const [minGuests, setMinGuests] = useState(d?.MinGuests?.toString() ?? '');
   const [maxGuests, setMaxGuests] = useState(d?.MaxGuests?.toString() ?? '');
-  const [indoorCeremony, setIndoorCeremony] = useState(d?.IndoorCeremonyCapacity?.toString() ?? '');
-  const [outdoorCeremony, setOutdoorCeremony] = useState(d?.OutdoorCeremonyCapacity?.toString() ?? '');
-  const [indoorReception, setIndoorReception] = useState(d?.IndoorReceptionCapacity?.toString() ?? '');
-  const [outdoorReception, setOutdoorReceptionCapacity] = useState(d?.OutdoorReceptionCapacity?.toString() ?? '');
+  const [indoorCeremony, setIndoorCeremony] = useState(d?.IndoorCeremony?.toString() ?? '');
+  const [outdoorCeremony, setOutdoorCeremony] = useState(d?.OutdoorCeremony?.toString() ?? '');
+  const [indoorReception, setIndoorReception] = useState(d?.IndoorReception?.toString() ?? '');
+  const [outdoorReception, setOutdoorReceptionCapacity] = useState(d?.OutdoorReception?.toString() ?? '');
 
   // Venue Details
   const [catering, setCatering] = useState(d?.Catering ?? '');
   const [alcohol, setAlcohol] = useState(d?.Alcohol ?? '');
   const [amplifiedMusic, setAmplifiedMusic] = useState(d?.AmplifiedMusic ?? '');
-  const [wheelchair, setWheelchair] = useState<boolean | undefined>(d?.WheelchairAccessible);
   const [availability, setAvailability] = useState(d?.Availability ?? '');
-  const [seasonDetails, setSeasonDetails] = useState(d?.SeasonDetails ?? '');
-  const [eventTypes, setEventTypes] = useState<string[]>(
-    d?.EventTypes ? d.EventTypes.split(',').map((s) => s.trim()).filter(Boolean) : []
-  );
+  const [eventTypes, setEventTypes] = useState<string[]>([]);
 
   // Tags
   const [styleTags, setStyleTags] = useState<string[]>(
@@ -167,21 +163,18 @@ export default function DashboardForm({ slug, placeId, initialData }: Props) {
       CeremonyFeeMax: ceremonyFeeMax ? parseInt(ceremonyFeeMax) : undefined,
       PackagePriceMin: packagePriceMin ? parseInt(packagePriceMin) : undefined,
       PackagePriceMax: packagePriceMax ? parseInt(packagePriceMax) : undefined,
-      PackageIncludes: packageIncludes || undefined,
-      ServiceChargePercent: serviceCharge ? parseFloat(serviceCharge) : undefined,
+      PackagesIncluded: packageIncludes || undefined,
+      ServiceCharge: serviceCharge ? parseFloat(serviceCharge) : undefined,
       MinGuests: minGuests ? parseInt(minGuests) : undefined,
       MaxGuests: maxGuests ? parseInt(maxGuests) : undefined,
-      IndoorCeremonyCapacity: indoorCeremony ? parseInt(indoorCeremony) : undefined,
-      OutdoorCeremonyCapacity: outdoorCeremony ? parseInt(outdoorCeremony) : undefined,
-      IndoorReceptionCapacity: indoorReception ? parseInt(indoorReception) : undefined,
-      OutdoorReceptionCapacity: outdoorReception ? parseInt(outdoorReception) : undefined,
+      IndoorCeremony: indoorCeremony ? parseInt(indoorCeremony) : undefined,
+      OutdoorCeremony: outdoorCeremony ? parseInt(outdoorCeremony) : undefined,
+      IndoorReception: indoorReception ? parseInt(indoorReception) : undefined,
+      OutdoorReception: outdoorReception ? parseInt(outdoorReception) : undefined,
       Catering: catering || undefined,
       Alcohol: alcohol || undefined,
       AmplifiedMusic: amplifiedMusic || undefined,
-      WheelchairAccessible: wheelchair,
       Availability: availability || undefined,
-      SeasonDetails: seasonDetails || undefined,
-      EventTypes: eventTypes.length > 0 ? eventTypes.join(', ') : undefined,
       StyleTags: styleTags.length > 0 ? styleTags.join(', ') : undefined,
       ViewTags: viewTags.length > 0 ? viewTags.join(', ') : undefined,
       Description: description || undefined,
@@ -314,34 +307,13 @@ export default function DashboardForm({ slug, placeId, initialData }: Props) {
             <label className="block text-sm font-medium text-gray-700 mb-1">Season Details</label>
             <input
               type="text"
-              value={seasonDetails}
-              onChange={(e) => setSeasonDetails(e.target.value)}
               placeholder="e.g. April through October only"
               className={inputClass}
+              disabled
             />
+            <p className="text-xs text-gray-400 mt-1">Season details not supported in this version.</p>
           </div>
         )}
-
-        {/* Wheelchair accessible */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Wheelchair Accessible</label>
-          <div className="flex gap-3">
-            {[true, false].map((val) => (
-              <button
-                key={String(val)}
-                type="button"
-                onClick={() => setWheelchair(val)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
-                  wheelchair === val
-                    ? 'bg-[#6B3E2E] text-white border-[#6B3E2E]'
-                    : 'bg-white text-gray-600 border-gray-300 hover:border-[#6B3E2E]'
-                }`}
-              >
-                {val ? 'Yes' : 'No'}
-              </button>
-            ))}
-          </div>
-        </div>
 
         {/* Event Types */}
         <CheckboxGroup
