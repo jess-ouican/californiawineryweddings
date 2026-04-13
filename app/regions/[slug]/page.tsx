@@ -2,6 +2,7 @@ import { getWineriesByRegion, getAllRegions, slugify, isCouplesFavorite } from '
 import { loadWineries } from '@/lib/data';
 import { generateRegionSEO, generateBreadcrumbSchema, generateFAQSchema } from '@/lib/seo';
 import WineryCard from '@/components/WineryCard';
+import RegionWeatherWidget from '@/components/RegionWeatherWidget';
 import Link from 'next/link';
 import { Metadata } from 'next';
 
@@ -109,6 +110,11 @@ export default async function RegionPage({ params }: { params: Promise<Params> }
           </div>
         </section>
       )}
+
+      {/* Weather Guide Widget */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 border-b border-gray-200">
+        <RegionWeatherWidget regionName={regionData.region} />
+      </section>
 
       {/* Wineries Grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

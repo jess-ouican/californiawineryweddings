@@ -23,6 +23,26 @@ export async function GET() {
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>${baseUrl}/tools</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/tools/wine-calculator</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/tools/shuttle-calculator</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/tools/wedding-weather</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>${baseUrl}/blog</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>

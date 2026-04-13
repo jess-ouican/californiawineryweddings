@@ -8,6 +8,7 @@ import VerificationBadge from '@/components/VerificationBadge';
 import CouplesFavoriteBadge from '@/components/CouplesFavoriteBadge';
 import WeddingTestimonials from '@/components/WeddingTestimonials';
 import WineryCard from '@/components/WineryCard';
+import WeddingPlanningToolsWidget from '@/components/WeddingPlanningToolsWidget';
 import { Metadata } from 'next';
 
 export const revalidate = 3600;
@@ -265,8 +266,8 @@ export default async function WineryPage({ params }: { params: Promise<Params> }
             )}
           </div>
 
-          {/* Sidebar - Lead Form */}
-          <div className="lg:col-span-1">
+          {/* Sidebar - Lead Form + Tools */}
+          <div className="lg:col-span-1 space-y-6">
             <div className="sticky top-20 bg-white p-8 rounded-lg shadow-md border border-gray-200">
               <h3 className="font-serif text-2xl font-bold text-[#6B3E2E] mb-2">
                 Request Information
@@ -276,6 +277,8 @@ export default async function WineryPage({ params }: { params: Promise<Params> }
               </p>
               <LeadForm wineryName={winery.title} region={winery.city || 'California'} />
             </div>
+            
+            <WeddingPlanningToolsWidget />
           </div>
         </div>
       </div>

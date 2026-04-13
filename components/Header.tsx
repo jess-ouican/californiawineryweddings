@@ -32,6 +32,12 @@ export default function Header() {
               Regions
             </Link>
             <Link
+              href="/tools"
+              className="text-gray-700 hover:text-[#6B3E2E] font-medium text-sm transition"
+            >
+              Tools
+            </Link>
+            <Link
               href="/blog"
               className="text-gray-700 hover:text-[#6B3E2E] font-medium text-sm transition"
             >
