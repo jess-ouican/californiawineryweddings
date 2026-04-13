@@ -8,6 +8,9 @@ interface Params {
   slug: string;
 }
 
+// Dynamic rendering to avoid hydration issues
+export const dynamic = 'force-dynamic';
+
 export async function generateStaticParams(): Promise<Params[]> {
   const wineries = await loadWineries();
   return wineries.map((winery) => ({
