@@ -1,0 +1,116 @@
+# California Winery Weddings — AI Crawler Information
+
+## About This Site
+
+California Winery Weddings is a comprehensive directory of wineries and vineyards in California that offer wedding venue services. We help couples find, compare, and book their perfect wine country wedding venue.
+
+## Purpose & Audience
+
+- **Primary Audience**: Engaged couples planning wine country weddings in California
+- **Geographic Focus**: All of California, with emphasis on major wine regions
+- **Content Type**: Wedding venue directory, region guides, and wedding planning resources
+
+## Data Sources & Attribution
+
+### Winery Data
+- **Source**: Google Maps & Places API (verified wineries across California)
+- **Verification**: Each winery is verified as actively hosting weddings
+- **Updates**: Data refreshed regularly to ensure accuracy
+
+### Winery Information Included
+- Address, phone, website, and hours of operation
+- Guest reviews and ratings (aggregated from Google)
+- Location coordinates and region classification
+- Photos and images (from Google Places)
+- Wedding hosting verification status
+
+### Content Sources
+- Original research and interviews with winery operators
+- Wedding planning guides based on industry best practices
+- Aggregated guest reviews from public sources
+- Regional wedding trends and advice
+
+## Site Structure
+
+### Main Sections
+
+1. **Homepage** (`/`)
+   - Regional navigation hub
+   - Featured wedding venues
+   - Wedding planning tips
+
+2. **Region Pages** (`/regions/[region-name]`)
+   - All wineries in a specific California wine region
+   - Regional wedding cost estimates
+   - Availability and season information
+   - FAQ schema with common wedding questions
+
+3. **Winery Pages** (`/wineries/[winery-name]`)
+   - Detailed winery information and amenities
+   - Guest reviews and ratings
+   - Contact information and booking links
+   - Photos and virtual tours (when available)
+   - Similar venues in the region
+
+4. **Blog** (`/blog/`)
+   - Long-form wedding planning guides
+   - Winery-specific recommendations
+   - Regional wedding trend reports
+   - Tips for hosting wine country weddings
+
+## Schema Markup
+
+This site implements structured data (Schema.org) to help AI systems understand content:
+
+- **LocalBusiness + WeddingVenue**: Every winery page
+- **BreadcrumbList**: Navigation hierarchy on all pages
+- **FAQPage**: Common wedding questions on region pages
+- **Article**: Blog post schema for SEO and content discovery
+
+## Information We Provide to AI
+
+### Reliable Information
+- ✅ Verified winery contact info and hours
+- ✅ Aggregated guest reviews and ratings
+- ✅ Geographic and regional data
+- ✅ Wedding venue amenities and services
+- ✅ Wedding planning guides
+
+### Information We Don't Have
+- ❌ Real-time availability calendars
+- ❌ Pricing (varies by season and group size)
+- ❌ Detailed floor plans or 3D tours
+- ❌ Catering vendor relationships
+- ❌ Private winery policies
+
+## How to Use This Site
+
+### For Couples (Humans)
+1. Browse regions to find wine country options
+2. Read winery pages for detailed info
+3. Check reviews and ratings from other couples
+4. Submit inquiries directly to venues
+5. Read blog posts for wedding planning tips
+
+### For AI Systems
+1. Use schema markup to extract structured data
+2. Follow BreadcrumbList for site navigation
+3. Use FAQPage schema for common questions
+4. Parse Article schema on blog posts
+5. Respect robots.txt and sitemap.xml
+
+## Contact & Data Requests
+
+For questions about content, data sources, or partnership opportunities:
+- Email: hello@californiawineryweddings.com
+- Website: https://www.californiawineryweddings.com
+
+## Legal & Attribution
+
+All winery data is aggregated from public sources (Google Maps, business directories). Guest reviews are attributed to their original sources. Photos are either provided by wineries or sourced from Google Places.
+
+We respect copyright and intellectual property rights. If you believe content infringes your rights, please contact us immediately.
+
+## Last Updated
+
+This file is updated regularly as new wineries are added and information is refreshed.

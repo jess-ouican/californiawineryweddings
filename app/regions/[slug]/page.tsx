@@ -1,6 +1,6 @@
 import { getWineriesByRegion, getAllRegions, slugify, isCouplesFavorite } from '@/lib/utils';
 import { loadWineries } from '@/lib/data';
-import { generateRegionSEO } from '@/lib/seo';
+import { generateRegionSEO, generateBreadcrumbSchema, generateFAQSchema } from '@/lib/seo';
 import WineryCard from '@/components/WineryCard';
 import Link from 'next/link';
 import { Metadata } from 'next';
@@ -53,9 +53,28 @@ export default async function RegionPage({ params }: { params: Promise<Params> }
 
   const regionWineries = getWineriesByRegion(wineries, regionData.region);
   const couplesFavoritesInRegion = regionWineries.filter(isCouplesFavorite);
+  
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: 'https://www.californiawineryweddings.com' },
+    { name: regionData.region, url: `https://www.californiawineryweddings.com/regions/${regionData.slug}` },
+  ]);
+  
+  const faqSchema = generateFAQSchema(regionData.region, regionData.count);
 
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqSchema),
+        }}
+      />
       {/* Hero */}
       <section className="bg-gradient-to-br from-[#F5E6D3] to-[#F0D5B8] py-12 sm:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

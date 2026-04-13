@@ -78,3 +78,94 @@ export function generateWinerySchema(winery: any, region: string | null) {
     },
   };
 }
+
+/**
+ * Generate BreadcrumbList schema for navigation hierarchy
+ */
+export function generateBreadcrumbSchema(items: Array<{ name: string; url: string }>) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.name,
+      item: item.url,
+    })),
+  };
+}
+
+/**
+ * Generate FAQPage schema for region pages
+ */
+export function generateFAQSchema(region: string, count: number) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: `How much does a winery wedding cost in ${region}, California?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: `Winery wedding costs in ${region} vary widely depending on the venue, guest count, and season. Most ${region} wineries charge venue rental fees ranging from $1,500 to $5,000+, with additional costs for catering, beverages, and services. Many wineries offer all-inclusive packages that can range from $5,000 to $25,000+ total. Contact individual venues for detailed pricing and packages.`,
+        },
+      },
+      {
+        '@type': 'Question',
+        name: `How many winery wedding venues are in ${region}, California?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: `There are ${count} wedding-friendly wineries and vineyards in ${region}, California available on California Winery Weddings. Each venue offers unique settings, from intimate estate gardens to grand ballrooms, accommodating groups from 20 to 300+ guests.`,
+        },
+      },
+      {
+        '@type': 'Question',
+        name: `What is the best time of year to have a winery wedding in ${region}?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: `The best time for a winery wedding in ${region} is typically late spring (May-June) or early fall (September-October) when the weather is pleasant and the vineyard views are stunning. Summer can be hot, and winter may have limited outdoor options. Check with your chosen venue for their peak seasons and availability.`,
+        },
+      },
+    ],
+  };
+}
+
+/**
+ * Generate Article schema for blog posts
+ */
+export function generateArticleSchema(
+  title: string,
+  description: string,
+  publishedDate: string,
+  updatedDate?: string,
+  author = 'California Winery Weddings'
+) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: title,
+    description: description,
+    author: {
+      '@type': 'Organization',
+      name: author,
+      url: 'https://www.californiawineryweddings.com',
+    },
+    datePublished: publishedDate,
+    dateModified: updatedDate || publishedDate,
+    publisher: {
+      '@type': 'Organization',
+      name: 'California Winery Weddings',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://www.californiawineryweddings.com/logo.png',
+      },
+    },
+    image: {
+      '@type': 'ImageObject',
+      url: 'https://www.californiawineryweddings.com/og-image.jpg',
+      width: 1200,
+      height: 630,
+    },
+  };
+}

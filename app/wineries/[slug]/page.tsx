@@ -1,6 +1,6 @@
 import { getWineryBySlug, slugify, isCouplesFavorite, getWineriesByRegion } from '@/lib/utils';
 import { loadWineries } from '@/lib/data';
-import { generateWinerySEO, generateWinerySchema } from '@/lib/seo';
+import { generateWinerySEO, generateWinerySchema, generateBreadcrumbSchema } from '@/lib/seo';
 import Link from 'next/link';
 import LeadForm from '@/components/LeadForm';
 import WineryImage from '@/components/WineryImage';
@@ -62,6 +62,11 @@ export default async function WineryPage({ params }: { params: Promise<Params> }
   }
 
   const schema = generateWinerySchema(winery, winery.city);
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: 'https://www.californiawineryweddings.com' },
+    { name: winery.region || 'California', url: `https://www.californiawineryweddings.com/regions/${winery.region ? slugify(winery.region) : 'california'}` },
+    { name: winery.title, url: `https://www.californiawineryweddings.com/wineries/${slugify(winery.title)}` },
+  ]);
   const ratingPercentages = winery.reviewsDistribution && winery.reviewsCount && winery.totalScore ? {
     five: Math.round((winery.reviewsDistribution.fiveStar / winery.reviewsCount) * 100),
     four: Math.round((winery.reviewsDistribution.fourStar / winery.reviewsCount) * 100),
@@ -82,6 +87,12 @@ export default async function WineryPage({ params }: { params: Promise<Params> }
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(schema),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema),
         }}
       />
 

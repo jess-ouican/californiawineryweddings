@@ -1,0 +1,35 @@
+# Robots.txt for California Winery Weddings
+# Allow search engines to crawl and index all public pages
+
+User-agent: *
+Allow: /
+Allow: /blog/
+Allow: /regions/
+Allow: /wineries/
+Allow: /sitemap.xml
+Allow: /llms.txt
+Allow: /public/
+
+Disallow: /.next/
+Disallow: /admin/
+Disallow: /_next/
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://www.californiawineryweddings.com/sitemap.xml
+
+# Crawl delay (optional, helps reduce server load)
+Crawl-delay: 1
+
+# Allow specific search engines to crawl faster
+User-agent: Googlebot
+Crawl-delay: 0
+Allow: /
+
+User-agent: Bingbot
+Crawl-delay: 0
+Allow: /
+
+# Gemini crawler
+User-agent: Google-Extended
+Allow: /llms.txt
