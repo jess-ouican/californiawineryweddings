@@ -33,22 +33,29 @@ export async function createClaimedListing(
   role?: string,
   listingURL?: string
 ): Promise<ClaimedListing> {
-  const record = await claimedListingsTable.create({
-    PlaceId: placeId,
-    WineryName: wineryName,
-    OwnerName: ownerName,
-    OwnerEmail: ownerEmail,
-    Role: role || '',
-    Token: token,
-    Verified: false,
-    ClaimedAt: new Date().toISOString(),
-    ListingURL: listingURL || '',
-  });
+  try {
+    console.log('[AIRTABLE] Creating claimed listing:', { placeId, wineryName, ownerEmail });
+    const record = await claimedListingsTable.create({
+      PlaceId: placeId,
+      WineryName: wineryName,
+      OwnerName: ownerName,
+      OwnerEmail: ownerEmail,
+      Role: role || '',
+      Token: token,
+      Verified: false,
+      ClaimedAt: new Date().toISOString(),
+      ListingURL: listingURL || '',
+    });
 
-  return {
-    id: record.id,
-    fields: record.fields as ClaimedListing['fields'],
-  };
+    console.log('[AIRTABLE] ✓ Record created:', record.id);
+    return {
+      id: record.id,
+      fields: record.fields as ClaimedListing['fields'],
+    };
+  } catch (error) {
+    console.error('[AIRTABLE] ✗ Failed to create record:', error instanceof Error ? error.message : error);
+    throw error;
+  }
 }
 
 /**

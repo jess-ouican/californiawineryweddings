@@ -142,7 +142,28 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Error creating claim:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('[CLAIM] Error creating claim:', {
+      message: errorMessage,
+      stack: error instanceof Error ? error.stack : null,
+      error,
+    });
+    
+    // More specific error messages
+    if (errorMessage.includes('Resend')) {
+      return NextResponse.json(
+        { message: 'Failed to send verification email. Please try again.' },
+        { status: 500 }
+      );
+    }
+    
+    if (errorMessage.includes('Airtable')) {
+      return NextResponse.json(
+        { message: 'Failed to create listing record. Please try again.' },
+        { status: 500 }
+      );
+    }
+    
     return NextResponse.json(
       { message: 'An error occurred. Please try again.' },
       { status: 500 }
