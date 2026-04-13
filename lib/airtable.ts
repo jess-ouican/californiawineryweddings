@@ -210,23 +210,20 @@ export interface VenueDetails {
   CeremonyFeeMax?: number;
   PackagePriceMin?: number;
   PackagePriceMax?: number;
-  PackageIncludes?: string;
-  ServiceChargePercent?: number;
+  PackagesIncluded?: string;
+  ServiceCharge?: number;
   // Capacity
   MinGuests?: number;
   MaxGuests?: number;
-  IndoorCeremonyCapacity?: number;
-  OutdoorCeremonyCapacity?: number;
-  IndoorReceptionCapacity?: number;
-  OutdoorReceptionCapacity?: number;
+  IndoorCeremony?: number;
+  OutdoorCeremony?: number;
+  IndoorReception?: number;
+  OutdoorReception?: number;
   // Venue Details
   Catering?: string;
   Alcohol?: string;
   AmplifiedMusic?: string;
-  WheelchairAccessible?: boolean;
   Availability?: string;
-  SeasonDetails?: string;
-  EventTypes?: string; // comma-separated
   // Tags
   StyleTags?: string; // comma-separated
   ViewTags?: string; // comma-separated
@@ -257,21 +254,18 @@ export async function getVenueDetails(placeId: string): Promise<VenueDetails | n
       CeremonyFeeMax: f.CeremonyFeeMax as number | undefined,
       PackagePriceMin: f.PackagePriceMin as number | undefined,
       PackagePriceMax: f.PackagePriceMax as number | undefined,
-      PackageIncludes: f.PackageIncludes as string | undefined,
-      ServiceChargePercent: f.ServiceChargePercent as number | undefined,
+      PackagesIncluded: f.PackagesIncluded as string | undefined,
+      ServiceCharge: f.ServiceCharge as number | undefined,
       MinGuests: f.MinGuests as number | undefined,
       MaxGuests: f.MaxGuests as number | undefined,
-      IndoorCeremonyCapacity: f.IndoorCeremonyCapacity as number | undefined,
-      OutdoorCeremonyCapacity: f.OutdoorCeremonyCapacity as number | undefined,
-      IndoorReceptionCapacity: f.IndoorReceptionCapacity as number | undefined,
-      OutdoorReceptionCapacity: f.OutdoorReceptionCapacity as number | undefined,
+      IndoorCeremony: f.IndoorCeremony as number | undefined,
+      OutdoorCeremony: f.OutdoorCeremony as number | undefined,
+      IndoorReception: f.IndoorReception as number | undefined,
+      OutdoorReception: f.OutdoorReception as number | undefined,
       Catering: f.Catering as string | undefined,
       Alcohol: f.Alcohol as string | undefined,
       AmplifiedMusic: f.AmplifiedMusic as string | undefined,
-      WheelchairAccessible: f.WheelchairAccessible as boolean | undefined,
       Availability: f.Availability as string | undefined,
-      SeasonDetails: f.SeasonDetails as string | undefined,
-      EventTypes: f.EventTypes as string | undefined,
       StyleTags: f.StyleTags as string | undefined,
       ViewTags: f.ViewTags as string | undefined,
       Description: f.Description as string | undefined,
