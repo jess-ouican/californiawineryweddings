@@ -10,6 +10,8 @@ import WeddingTestimonials from '@/components/WeddingTestimonials';
 import WineryCard from '@/components/WineryCard';
 import WeddingPlanningToolsWidget from '@/components/WeddingPlanningToolsWidget';
 import WineryHeaderActions from '@/components/WineryHeaderActions';
+import VenueInfoSection from '@/components/VenueInfoSection';
+import { getVenueDetails } from '@/lib/airtable';
 import { Metadata } from 'next';
 
 export const revalidate = 3600;
@@ -61,6 +63,14 @@ export default async function WineryPage({ params }: { params: Promise<Params> }
         </Link>
       </div>
     );
+  }
+
+  // Fetch venue details (owner-submitted) — non-blocking, null if not available
+  let venueDetails = null;
+  try {
+    venueDetails = await getVenueDetails(winery.placeId);
+  } catch {
+    // ignore — venue details are optional
   }
 
   const schema = generateWinerySchema(winery, winery.city);
@@ -264,6 +274,11 @@ export default async function WineryPage({ params }: { params: Promise<Params> }
                   ))}
                 </div>
               </div>
+            )}
+
+            {/* Venue Information — owner-submitted details */}
+            {venueDetails && (
+              <VenueInfoSection details={venueDetails} />
             )}
 
             {/* Wedding Testimonials */}
