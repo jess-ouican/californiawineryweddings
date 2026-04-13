@@ -43,7 +43,7 @@ export async function createClaimedListing(
       Role: role || '',
       Token: token,
       Verified: false,
-      ClaimedAt: new Date().toISOString(),
+      ClaimedAt: new Date().toISOString().split('T')[0], // Date-only format for Airtable
       ListingURL: listingURL || '',
     });
 
