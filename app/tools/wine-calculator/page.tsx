@@ -21,6 +21,7 @@ export default function WineCalculator() {
   const [whitePercent, setWhitePercent] = useState(40);
   const [sparklingPercent, setSparklingPercent] = useState(20);
   const [result, setResult] = useState<CalculationResult | null>(null);
+  const [lastTouchedType, setLastTouchedType] = useState<'red' | 'white' | 'sparkling'>('red');
 
   // Drinking rates (glasses per person per hour)
   const drinkingRates = {
@@ -60,25 +61,78 @@ export default function WineCalculator() {
     calculate();
   }, [guests, duration, drinkingLevel, redPercent, whitePercent, sparklingPercent]);
 
-  const adjustPercent = (type: 'red' | 'white' | 'sparkling', change: number) => {
-    let newRed = redPercent;
-    let newWhite = whitePercent;
-    let newSparkling = sparklingPercent;
-
+  const handleWineMixChange = (type: 'red' | 'white' | 'sparkling', newValue: number) => {
+    // Clamp the value between 0 and 100
+    newValue = Math.min(100, Math.max(0, newValue));
+    
+    // Update the touched slider and track which one was changed
+    setLastTouchedType(type);
+    
+    let updatedRed = redPercent;
+    let updatedWhite = whitePercent;
+    let updatedSparkling = sparklingPercent;
+    
+    // Set the new value for the touched slider
     if (type === 'red') {
-      newRed = Math.min(100, Math.max(0, redPercent + change));
+      updatedRed = newValue;
     } else if (type === 'white') {
-      newWhite = Math.min(100, Math.max(0, whitePercent + change));
+      updatedWhite = newValue;
     } else {
-      newSparkling = Math.min(100, Math.max(0, sparklingPercent + change));
+      updatedSparkling = newValue;
     }
-
-    const total = newRed + newWhite + newSparkling;
-    if (total <= 100) {
-      if (type === 'red') setRedPercent(newRed);
-      else if (type === 'white') setWhitePercent(newWhite);
-      else setSparklingPercent(newSparkling);
+    
+    // Calculate remaining percentage to distribute
+    const touchedValue = newValue;
+    const remainingPercent = 100 - touchedValue;
+    
+    // Get the two untouched sliders
+    const others = type === 'red' 
+      ? [{ type: 'white' as const, value: whitePercent }, { type: 'sparkling' as const, value: sparklingPercent }]
+      : type === 'white'
+      ? [{ type: 'red' as const, value: redPercent }, { type: 'sparkling' as const, value: sparklingPercent }]
+      : [{ type: 'red' as const, value: redPercent }, { type: 'white' as const, value: whitePercent }];
+    
+    // Calculate proportional split of remaining percentage
+    const othersTotal = others[0].value + others[1].value;
+    
+    if (othersTotal === 0) {
+      // If both others are 0, split remaining equally
+      updatedRed = type === 'red' ? newValue : remainingPercent / 2;
+      updatedWhite = type === 'white' ? newValue : (type === 'red' ? remainingPercent / 2 : remainingPercent / 2);
+      updatedSparkling = type === 'sparkling' ? newValue : (type === 'red' ? remainingPercent / 2 : (type === 'white' ? remainingPercent / 2 : remainingPercent / 2));
+    } else {
+      // Distribute remaining percentage proportionally
+      const ratio = remainingPercent / othersTotal;
+      
+      others.forEach(other => {
+        const proportionalValue = Math.round(other.value * ratio);
+        if (other.type === 'red') {
+          updatedRed = proportionalValue;
+        } else if (other.type === 'white') {
+          updatedWhite = proportionalValue;
+        } else {
+          updatedSparkling = proportionalValue;
+        }
+      });
     }
+    
+    // Ensure total is exactly 100% by adjusting rounding errors
+    const total = updatedRed + updatedWhite + updatedSparkling;
+    if (total !== 100) {
+      const diff = 100 - total;
+      if (type === 'red') {
+        updatedWhite += diff;
+      } else if (type === 'white') {
+        updatedSparkling += diff;
+      } else {
+        updatedRed += diff;
+      }
+    }
+    
+    // Update all states
+    setRedPercent(updatedRed);
+    setWhitePercent(updatedWhite);
+    setSparklingPercent(updatedSparkling);
   };
 
   return (
@@ -193,7 +247,7 @@ export default function WineCalculator() {
                           min="0"
                           max="100"
                           value={redPercent}
-                          onChange={(e) => setRedPercent(Number(e.target.value))}
+                          onChange={(e) => handleWineMixChange('red', Number(e.target.value))}
                           className="w-full h-2 bg-red-200 rounded-lg appearance-none cursor-pointer"
                           style={{
                             background: `linear-gradient(to right, #8B2E2E 0%, #8B2E2E ${redPercent}%, #e5e7eb ${redPercent}%, #e5e7eb 100%)`,
@@ -214,7 +268,7 @@ export default function WineCalculator() {
                           min="0"
                           max="100"
                           value={whitePercent}
-                          onChange={(e) => setWhitePercent(Number(e.target.value))}
+                          onChange={(e) => handleWineMixChange('white', Number(e.target.value))}
                           className="w-full h-2 bg-yellow-200 rounded-lg appearance-none cursor-pointer"
                           style={{
                             background: `linear-gradient(to right, #D4AF37 0%, #D4AF37 ${whitePercent}%, #e5e7eb ${whitePercent}%, #e5e7eb 100%)`,
@@ -235,7 +289,7 @@ export default function WineCalculator() {
                           min="0"
                           max="100"
                           value={sparklingPercent}
-                          onChange={(e) => setSparklingPercent(Number(e.target.value))}
+                          onChange={(e) => handleWineMixChange('sparkling', Number(e.target.value))}
                           className="w-full h-2 bg-amber-200 rounded-lg appearance-none cursor-pointer"
                           style={{
                             background: `linear-gradient(to right, #D4A574 0%, #D4A574 ${sparklingPercent}%, #e5e7eb ${sparklingPercent}%, #e5e7eb 100%)`,
