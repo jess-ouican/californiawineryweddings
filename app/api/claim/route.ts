@@ -87,10 +87,10 @@ export async function POST(request: NextRequest) {
 
     // Send verification email via Resend
     console.log('[CLAIM] Sending email to:', ownerEmail);
-    const verifyUrl = `https://www.californiawineryweddings.com/claim/verify?token=${token}`;
+    const verifyUrl = `https://californiawineryweddings.vercel.app/claim/verify?token=${token}`;
 
     const emailResult = await resend.emails.send({
-      from: 'California Winery Weddings <no-reply@californiawineryweddings.com>',
+      from: 'California Winery Weddings <onboarding@resend.dev>',
       to: ownerEmail,
       subject: `Verify Your Winery Listing - ${wineryName}`,
       html: `
