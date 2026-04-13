@@ -20,7 +20,7 @@ export default async function Home() {
             Find Your Perfect California Winery Wedding
           </h1>
           <p className="text-xl text-gray-700 mb-8 max-w-3xl mx-auto leading-relaxed">
-            Discover 1,300+ wineries and vineyards across California's most beautiful wine regions. From intimate gatherings to grand celebrations, find your dream venue.
+            Discover 435+ verified wineries and vineyards across California's most beautiful wine regions. From intimate gatherings to grand celebrations, find your dream venue.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a

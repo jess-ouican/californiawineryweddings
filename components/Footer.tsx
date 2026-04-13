@@ -10,7 +10,7 @@ export default function Footer() {
               California Winery Weddings
             </h3>
             <p className="text-sm text-gray-300">
-              Discover 1,300+ beautiful California wineries and vineyards for your perfect wedding day.
+              Discover 435+ verified California wineries and vineyards for your perfect wedding day.
             </p>
           </div>
           <div>

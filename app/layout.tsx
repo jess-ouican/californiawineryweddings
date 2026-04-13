@@ -20,7 +20,7 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: 'California Winery Weddings - Find Your Perfect Venue',
   description:
-    'Discover 1,300+ California wineries and vineyards for your dream wedding. Browse by region, read reviews, and request information from your favorite venues.',
+    'Discover 435+ verified California wineries and vineyards for your dream wedding. Browse by region, read reviews, and request information from your favorite venues.',
   keywords: [
     'winery weddings',
     'California',
@@ -32,14 +32,14 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: 'California Winery Weddings',
-    description: 'Discover 1,300+ California wineries and vineyards for your dream wedding.',
+    description: 'Discover 435+ verified California wineries and vineyards for your dream wedding.',
     type: 'website',
     url: 'https://www.californiawineryweddings.com',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'California Winery Weddings',
-    description: 'Discover 1,300+ California wineries and vineyards for your dream wedding.',
+    description: 'Discover 435+ verified California wineries and vineyards for your dream wedding.',
   },
 };
 
@@ -61,7 +61,7 @@ export default function RootLayout({
               name: 'California Winery Weddings',
               url: 'https://www.californiawineryweddings.com',
               description:
-                'Discover 1,300+ California wineries and vineyards for your perfect wedding venue.',
+                'Discover 435+ verified California wineries and vineyards for your perfect wedding venue.',
             }),
           }}
         />

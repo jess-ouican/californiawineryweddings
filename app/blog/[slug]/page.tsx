@@ -136,7 +136,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             Looking for your perfect winery wedding venue?
           </h2>
           <p className="text-gray-700 mb-6">
-            Browse our directory of {1300}+ California wineries ready to host your big day.
+            Browse our directory of 435+ verified California wineries ready to host your big day.
           </p>
           <Link
             href="/"

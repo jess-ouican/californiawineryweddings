@@ -44,7 +44,7 @@ export const siteSchema = {
   '@type': 'WebSite',
   name: 'California Winery Weddings',
   url: 'https://www.californiawineryweddings.com',
-  description: 'Discover 1,300+ California wineries and vineyards for your perfect wedding venue.',
+  description: 'Discover 435+ verified California wineries and vineyards for your perfect wedding venue.',
 };
 
 export function generateWinerySchema(winery: any, region: string | null) {
