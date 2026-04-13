@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
  * Health check endpoint for debugging the claiming system
  */
 export async function GET() {
-  const checks = {
+  const checks: Record<string, any> = {
     env: {
       AIRTABLE_API_KEY: process.env.AIRTABLE_API_KEY ? '✓ Set' : '✗ Missing',
       AIRTABLE_BASE_ID: process.env.AIRTABLE_BASE_ID ? '✓ Set' : '✗ Missing',
