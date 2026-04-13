@@ -1,7 +1,9 @@
 import { getWineriesByRegion, getAllRegions, slugify, isCouplesFavorite } from '@/lib/utils';
 import { loadWineries } from '@/lib/data';
 import { generateRegionSEO, generateBreadcrumbSchema, generateFAQSchema } from '@/lib/seo';
+import { getVerifiedClaimedPlaceIds } from '@/lib/airtable';
 import WineryCard from '@/components/WineryCard';
+import VerifiedClaimedWineries from '@/components/VerifiedClaimedWineries';
 import RegionWeatherWidget from '@/components/RegionWeatherWidget';
 import Link from 'next/link';
 import { Metadata } from 'next';
@@ -54,6 +56,7 @@ export default async function RegionPage({ params }: { params: Promise<Params> }
 
   const regionWineries = getWineriesByRegion(wineries, regionData.region);
   const couplesFavoritesInRegion = regionWineries.filter(isCouplesFavorite);
+  const verifiedPlaceIds = await getVerifiedClaimedPlaceIds();
   
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: 'Home', url: 'https://www.californiawineryweddings.com' },
@@ -110,6 +113,9 @@ export default async function RegionPage({ params }: { params: Promise<Params> }
           </div>
         </section>
       )}
+
+      {/* Verified Claimed Wineries Section */}
+      <VerifiedClaimedWineries verifiedPlaceIds={verifiedPlaceIds} allWineries={regionWineries} />
 
       {/* Weather Guide Widget */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 border-b border-gray-200">

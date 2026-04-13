@@ -9,6 +9,7 @@ import CouplesFavoriteBadge from '@/components/CouplesFavoriteBadge';
 import WeddingTestimonials from '@/components/WeddingTestimonials';
 import WineryCard from '@/components/WineryCard';
 import WeddingPlanningToolsWidget from '@/components/WeddingPlanningToolsWidget';
+import WineryHeaderActions from '@/components/WineryHeaderActions';
 import { Metadata } from 'next';
 
 export const revalidate = 3600;
@@ -113,6 +114,11 @@ export default async function WineryPage({ params }: { params: Promise<Params> }
             {winery.weddingConfidence && (
               <VerificationBadge confidence={winery.weddingConfidence} size="md" />
             )}
+            <WineryHeaderActions 
+              wineryTitle={winery.title} 
+              placeId={winery.placeId} 
+              slug={resolvedParams.slug} 
+            />
           </div>
           <p className="text-gray-700 text-lg">{winery.address}</p>
         </div>
