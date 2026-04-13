@@ -5,7 +5,8 @@ const base = new Airtable({
 }).base(process.env.AIRTABLE_BASE_ID!);
 
 export const claimedListingsTable = base('Claimed Listings');
-export const venueDetailsTable = base('Venue Details');
+// Using the complete Venue Details table with all 25 fields
+export const venueDetailsTable = base('tblCtgPoMhwcj0sXS');
 
 export interface ClaimedListing {
   id?: string;
