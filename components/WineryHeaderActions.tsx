@@ -51,7 +51,7 @@ export default function WineryHeaderActions({
   return (
     <Link
       href={`/claim/${slug}`}
-      className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-200 text-blue-700 rounded-lg hover:bg-blue-100 transition text-sm font-medium"
+      className="inline-flex items-center gap-2 px-4 py-2 bg-[#6B3E2E] hover:bg-[#5a3422] text-white rounded-lg transition text-sm font-semibold"
     >
       <svg
         className="w-4 h-4"

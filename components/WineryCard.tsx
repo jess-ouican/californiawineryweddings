@@ -6,6 +6,7 @@ import { Winery } from '@/lib/types';
 import { slugify, isCouplesFavorite } from '@/lib/utils';
 import VerificationBadge from './VerificationBadge';
 import CouplesFavoriteBadge from './CouplesFavoriteBadge';
+import VerifiedOwnerBadge from './VerifiedOwnerBadge';
 
 interface WineryCardProps {
   winery: Winery;
@@ -75,10 +76,7 @@ export default function WineryCard({ winery, variant = 'grid', isVerifiedOwner =
           </div>
           <div className="mb-2 space-y-1">
             {isVerifiedOwner && (
-              <div className="inline-flex items-center gap-1 bg-green-50 border border-green-200 text-green-700 px-2 py-1 rounded text-xs font-medium">
-                <span>✓</span>
-                <span>Verified Owner</span>
-              </div>
+              <VerifiedOwnerBadge size="sm" />
             )}
             {isCouplesFavorite(winery) && <CouplesFavoriteBadge />}
             {winery.weddingConfidence && (
