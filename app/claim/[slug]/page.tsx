@@ -39,6 +39,26 @@ export default async function ClaimPage({ params }: { params: Promise<Params> })
         <h1 className="font-serif text-4xl font-bold text-[#6B3E2E] mb-4">
           Winery Not Found
         </h1>
+        <p className="text-gray-600 mb-4">
+          Could not find a winery with the slug: {resolvedParams.slug}
+        </p>
+        <Link href="/" className="text-[#6B3E2E] hover:underline">
+          Return to Home
+        </Link>
+      </div>
+    );
+  }
+
+  // Verify placeId exists
+  if (!winery.placeId) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
+        <h1 className="font-serif text-4xl font-bold text-[#6B3E2E] mb-4">
+          Error: Missing Winery ID
+        </h1>
+        <p className="text-gray-600 mb-4">
+          This winery listing is missing required data. Please contact support.
+        </p>
         <Link href="/" className="text-[#6B3E2E] hover:underline">
           Return to Home
         </Link>

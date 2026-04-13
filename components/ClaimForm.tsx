@@ -47,17 +47,22 @@ export default function ClaimForm({ wineryName, placeId, slug }: ClaimFormProps)
       });
 
       const data = await response.json();
+      console.log('[CLAIM-FORM] Response:', { status: response.status, data });
 
       if (!response.ok) {
-        setError(data.message || 'Failed to submit claim. Please try again.');
+        const errorMsg = data.message || `Error: ${response.status}`;
+        console.error('[CLAIM-FORM] Error:', errorMsg);
+        setError(errorMsg);
         setLoading(false);
         return;
       }
 
+      console.log('[CLAIM-FORM] Success:', data);
       setSubmitted(true);
     } catch (err) {
-      setError('An error occurred. Please try again.');
-      console.error(err);
+      const errorMsg = err instanceof Error ? err.message : 'Unknown error';
+      console.error('[CLAIM-FORM] Exception:', errorMsg, err);
+      setError('Network error. Please check your connection and try again.');
       setLoading(false);
     }
   };
