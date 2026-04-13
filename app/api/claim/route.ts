@@ -28,12 +28,15 @@ function validateDomainEmail(email: string): boolean {
 }
 
 export async function POST(request: NextRequest) {
+  console.log('[CLAIM] POST request received');
   try {
     const body = await request.json();
+    console.log('[CLAIM] Request body:', { placeId: body.placeId, wineryName: body.wineryName, ownerEmail: body.ownerEmail });
     const { placeId, wineryName, ownerName, ownerEmail, role, listingURL } = body;
 
     // Validate input
     if (!placeId || !wineryName || !ownerName || !ownerEmail) {
+      console.log('[CLAIM] Missing fields:', { placeId: !!placeId, wineryName: !!wineryName, ownerName: !!ownerName, ownerEmail: !!ownerEmail });
       return NextResponse.json(
         { message: 'Missing required fields' },
         { status: 400 }
@@ -42,6 +45,7 @@ export async function POST(request: NextRequest) {
 
     // Validate domain email
     if (!validateDomainEmail(ownerEmail)) {
+      console.log('[CLAIM] Invalid domain email:', ownerEmail);
       return NextResponse.json(
         {
           message:
@@ -52,8 +56,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if already claimed
+    console.log('[CLAIM] Checking if already claimed:', placeId);
     const claimStatus = await isWineryClaimed(placeId);
     if (claimStatus.claimed) {
+      console.log('[CLAIM] Already claimed by:', claimStatus.email);
       return NextResponse.json(
         {
           message: `This winery was already claimed on ${claimStatus.email}. If you represent this winery, please contact support.`,
@@ -63,9 +69,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate verification token
+    console.log('[CLAIM] Generating token');
     const token = cryptoRandomString({ length: 32, type: 'url-safe' });
 
     // Create record in Airtable
+    console.log('[CLAIM] Creating Airtable record');
     const claimedListing = await createClaimedListing(
       placeId,
       wineryName,
@@ -75,11 +83,13 @@ export async function POST(request: NextRequest) {
       role,
       listingURL
     );
+    console.log('[CLAIM] ✓ Airtable record created:', claimedListing.id);
 
     // Send verification email via Resend
+    console.log('[CLAIM] Sending email to:', ownerEmail);
     const verifyUrl = `https://www.californiawineryweddings.com/claim/verify?token=${token}`;
 
-    await resend.emails.send({
+    const emailResult = await resend.emails.send({
       from: 'California Winery Weddings <no-reply@californiawineryweddings.com>',
       to: ownerEmail,
       subject: `Verify Your Winery Listing - ${wineryName}`,
@@ -133,7 +143,9 @@ export async function POST(request: NextRequest) {
         </html>
       `,
     });
+    console.log('[CLAIM] ✓ Email sent:', emailResult);
 
+    console.log('[CLAIM] ✓ Success');
     return NextResponse.json(
       {
         message: 'Claim submitted successfully. Check your email for verification link.',
@@ -143,10 +155,10 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error('[CLAIM] Error creating claim:', {
+    console.error('[CLAIM] ✗ FATAL ERROR:', {
       message: errorMessage,
       stack: error instanceof Error ? error.stack : null,
-      error,
+      fullError: JSON.stringify(error),
     });
     
     // More specific error messages
