@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-export default function VerifyPage() {
+function VerifyContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
@@ -129,5 +129,29 @@ export default function VerifyPage() {
         )}
       </div>
     </div>
+  );
+}
+
+function VerifyPageSuspenseFallback() {
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-[#FDF8F3] to-white flex items-center justify-center px-4">
+      <div className="max-w-md w-full text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#6B3E2E] mx-auto mb-6"></div>
+        <h1 className="font-serif text-3xl font-bold text-[#6B3E2E] mb-4">
+          Verifying Your Listing
+        </h1>
+        <p className="text-gray-600">
+          Please wait while we verify your ownership...
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export default function VerifyPage() {
+  return (
+    <Suspense fallback={<VerifyPageSuspenseFallback />}>
+      <VerifyContent />
+    </Suspense>
   );
 }
