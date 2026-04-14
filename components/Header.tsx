@@ -26,12 +26,6 @@ export default function Header() {
               Home
             </Link>
             <Link
-              href="/map"
-              className="text-gray-700 hover:text-[#6B3E2E] font-medium text-sm transition"
-            >
-              Map
-            </Link>
-            <Link
               href="/#regions"
               className="text-gray-700 hover:text-[#6B3E2E] font-medium text-sm transition"
             >
