@@ -40,6 +40,7 @@ export interface Winery {
   phone: string;
   phoneUnformatted?: string;
   website: string;
+  slug: string;
   totalScore: number;
   reviewsCount: number;
   reviewsDistribution: {

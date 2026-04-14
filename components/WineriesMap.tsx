@@ -1,13 +1,13 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
 import { Winery } from '@/lib/types';
 
 export default function WineriesMap({ wineries }: { wineries: Winery[] }) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showHint, setShowHint] = useState(true);
 
   useEffect(() => {
     // Load Leaflet CSS dynamically
@@ -35,8 +35,10 @@ export default function WineriesMap({ wineries }: { wineries: Winery[] }) {
     // Import Leaflet dynamically since it's loaded via script tag
     const L = (window as any).L;
 
-    // Create map - center on California
-    const mapInstance = L.map(mapContainer.current).setView([36.7783, -119.4179], 6);
+    // Create map - center on California, disable scroll zoom
+    const mapInstance = L.map(mapContainer.current, {
+      scrollWheelZoom: false,
+    }).setView([36.7783, -119.4179], 6);
 
     // Add OpenStreetMap tiles
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -44,6 +46,25 @@ export default function WineriesMap({ wineries }: { wineries: Winery[] }) {
       maxZoom: 19,
       minZoom: 4,
     }).addTo(mapInstance);
+
+    // Add keyboard listeners for Ctrl+scroll zoom
+    mapInstance.on('focus', () => {
+      mapInstance.scrollWheelZoom.enable();
+    });
+    mapInstance.on('blur', () => {
+      mapInstance.scrollWheelZoom.disable();
+    });
+
+    // Listen for Ctrl/Cmd key
+    document.addEventListener('keydown', (e) => {
+      if (e.ctrlKey || e.metaKey) {
+        mapInstance.scrollWheelZoom.enable();
+      }
+    });
+
+    document.addEventListener('keyup', () => {
+      mapInstance.scrollWheelZoom.disable();
+    });
 
     // Add markers for each winery
     wineries.forEach((winery) => {
@@ -59,21 +80,24 @@ export default function WineriesMap({ wineries }: { wineries: Winery[] }) {
 
         // Create popup content with link
         const popupContent = `
-          <div class="p-2 min-w-[200px]">
-            <h3 class="font-serif font-bold text-[#6B3E2E] mb-1">${winery.title}</h3>
-            <p class="text-xs text-gray-600 mb-2">${winery.city}, ${winery.county}</p>
-            <div class="flex items-center gap-1 mb-3">
-              <span class="text-yellow-500">★</span>
-              <span class="text-sm font-medium">${winery.totalScore.toFixed(1)}</span>
-              <span class="text-xs text-gray-500">(${winery.reviewsCount})</span>
+          <div style="padding: 12px; min-width: 280px; font-family: system-ui, -apple-system, sans-serif;">
+            <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 700; color: #6B3E2E; font-family: 'Crimson Text', serif;">${winery.title}</h3>
+            <p style="margin: 0 0 8px 0; font-size: 13px; color: #666; line-height: 1.4;">${winery.city}, ${winery.county}</p>
+            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 12px;">
+              <span style="color: #FCD34D; font-size: 16px;">★</span>
+              <span style="font-size: 14px; font-weight: 600; color: #333;">${winery.totalScore.toFixed(1)}</span>
+              <span style="font-size: 12px; color: #999;">(${winery.reviewsCount})</span>
             </div>
-            <a href="/wineries/${winery.city.toLowerCase().replace(/\s+/g, '-')}" class="inline-block bg-[#8B5A3C] text-white px-3 py-1 rounded text-xs font-medium hover:bg-[#6B3E2E] transition">
+            <a href="/wineries/${winery.slug}" style="display: inline-block; background-color: #6B3E2E; color: white; padding: 8px 16px; border-radius: 4px; font-size: 13px; font-weight: 600; text-decoration: none; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#4A2618'" onmouseout="this.style.backgroundColor='#6B3E2E'">
               View Details
             </a>
           </div>
         `;
 
-        marker.bindPopup(popupContent);
+        marker.bindPopup(popupContent, {
+          maxWidth: 320,
+          maxHeight: 300,
+        });
         marker.addTo(mapInstance);
       }
     });
@@ -83,7 +107,7 @@ export default function WineriesMap({ wineries }: { wineries: Winery[] }) {
   };
 
   return (
-    <div className="relative w-full h-screen flex flex-col">
+    <div className="relative w-full h-full flex flex-col">
       {isLoading && (
         <div className="absolute inset-0 bg-white bg-opacity-50 flex items-center justify-center z-10">
           <div className="text-center">
@@ -92,6 +116,24 @@ export default function WineriesMap({ wineries }: { wineries: Winery[] }) {
           </div>
         </div>
       )}
+
+      {/* Ctrl+Scroll Hint */}
+      {showHint && !isLoading && (
+        <div className="absolute top-4 left-4 z-20 bg-white border border-gray-300 rounded-lg shadow-lg px-4 py-2 max-w-sm">
+          <div className="flex items-start justify-between gap-2">
+            <p className="text-sm text-gray-700">
+              <strong>💡 Tip:</strong> Use <kbd className="bg-gray-100 px-2 py-1 rounded text-xs font-mono border border-gray-300">Ctrl</kbd> + <kbd className="bg-gray-100 px-2 py-1 rounded text-xs font-mono border border-gray-300">Scroll</kbd> to zoom
+            </p>
+            <button
+              onClick={() => setShowHint(false)}
+              className="text-gray-400 hover:text-gray-600 flex-shrink-0 text-lg leading-none"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
+
       <div ref={mapContainer} className="w-full h-full" style={{ minHeight: '500px' }} />
     </div>
   );

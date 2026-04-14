@@ -32,7 +32,7 @@ export default function Header() {
               Regions
             </Link>
             <Link
-              href="/app/map"
+              href="/map"
               className="text-gray-700 hover:text-[#6B3E2E] font-medium text-sm transition"
             >
               Map
