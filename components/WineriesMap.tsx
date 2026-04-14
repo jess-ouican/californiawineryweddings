@@ -35,7 +35,7 @@ export default function WineriesMap({ wineries }: { wineries: Winery[] }) {
     // Import Leaflet dynamically since it's loaded via script tag
     const L = (window as any).L;
 
-    // Create map - center on California, disable scroll zoom
+    // Create map - center on California, disable scroll zoom initially
     const mapInstance = L.map(mapContainer.current, {
       scrollWheelZoom: false,
     }).setView([36.7783, -119.4179], 6);
@@ -47,24 +47,27 @@ export default function WineriesMap({ wineries }: { wineries: Winery[] }) {
       minZoom: 4,
     }).addTo(mapInstance);
 
-    // Add keyboard listeners for Ctrl+scroll zoom
-    mapInstance.on('focus', () => {
-      mapInstance.scrollWheelZoom.enable();
-    });
-    mapInstance.on('blur', () => {
-      mapInstance.scrollWheelZoom.disable();
-    });
+    // Track Ctrl/Cmd key state
+    let ctrlPressed = false;
 
-    // Listen for Ctrl/Cmd key
-    document.addEventListener('keydown', (e) => {
+    // Listen for Ctrl/Cmd key down
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey || e.metaKey) {
+        ctrlPressed = true;
         mapInstance.scrollWheelZoom.enable();
       }
-    });
+    };
 
-    document.addEventListener('keyup', () => {
-      mapInstance.scrollWheelZoom.disable();
-    });
+    // Listen for Ctrl/Cmd key up
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (!e.ctrlKey && !e.metaKey) {
+        ctrlPressed = false;
+        mapInstance.scrollWheelZoom.disable();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
 
     // Add markers for each winery
     wineries.forEach((winery) => {
@@ -104,6 +107,12 @@ export default function WineriesMap({ wineries }: { wineries: Winery[] }) {
 
     map.current = mapInstance;
     setIsLoading(false);
+
+    // Cleanup event listeners
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
   };
 
   return (
