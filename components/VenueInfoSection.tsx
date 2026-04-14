@@ -26,7 +26,10 @@ function InfoRow({ icon, label, value }: { icon: string; label: string; value: s
 
 export default function VenueInfoSection({ details }: Props) {
   const hasPricing = details.CeremonyFeeMin || details.CeremonyFeeMax || details.PackagePriceMin || details.PackagePriceMax;
-  const hasCapacity = details.MinGuests || details.MaxGuests;
+  const hasCapacity =
+    details.MinGuests || details.MaxGuests ||
+    details.IndoorCeremonyCapacity || details.OutdoorCeremonyCapacity ||
+    details.IndoorReceptionCapacity || details.OutdoorReceptionCapacity;
   const styleTags = details.StyleTags ? details.StyleTags.split(',').map((s) => s.trim()).filter(Boolean) : [];
   const viewTags = details.ViewTags ? details.ViewTags.split(',').map((s) => s.trim()).filter(Boolean) : [];
   const eventTypes = details.EventTypes ? details.EventTypes.split(',').map((s) => s.trim()).filter(Boolean) : [];
@@ -35,7 +38,7 @@ export default function VenueInfoSection({ details }: Props) {
   if (details.PhotoUrls) {
     try {
       const parsed = JSON.parse(details.PhotoUrls);
-      photos = Array.isArray(parsed) ? parsed.filter(Boolean) : [];
+      photos = (Array.isArray(parsed) ? parsed.filter(Boolean) : []).slice(0, 5);
     } catch {
       photos = [];
     }
@@ -112,17 +115,55 @@ export default function VenueInfoSection({ details }: Props) {
         )}
 
         {hasCapacity && (
-          <InfoRow
-            icon="👥"
-            label="Capacity"
-            value={[
-              details.MinGuests && details.MaxGuests
-                ? `${details.MinGuests}–${details.MaxGuests} guests`
-                : details.MaxGuests ? `Up to ${details.MaxGuests} guests` : null,
-              details.IndoorCeremonyCapacity ? `Indoor ceremony: ${details.IndoorCeremonyCapacity}` : null,
-              details.OutdoorCeremonyCapacity ? `Outdoor ceremony: ${details.OutdoorCeremonyCapacity}` : null,
-            ].filter(Boolean).join(' · ')}
-          />
+          <div className="flex items-start gap-3 sm:col-span-2">
+            <span className="text-xl leading-none mt-0.5">👥</span>
+            <div className="flex-1">
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Capacity</p>
+              {(details.MinGuests || details.MaxGuests) && (
+                <p className="text-gray-800 text-sm mb-2">
+                  {details.MinGuests && details.MaxGuests
+                    ? `${details.MinGuests}–${details.MaxGuests} guests`
+                    : `Up to ${details.MaxGuests} guests`}
+                </p>
+              )}
+              {(details.IndoorCeremonyCapacity || details.OutdoorCeremonyCapacity ||
+                details.IndoorReceptionCapacity || details.OutdoorReceptionCapacity) && (
+                <table className="text-sm w-full max-w-xs">
+                  <thead>
+                    <tr>
+                      <th className="text-left text-xs text-gray-400 font-normal pb-1 pr-4"></th>
+                      <th className="text-right text-xs text-gray-400 font-normal pb-1 pr-4">Ceremony</th>
+                      <th className="text-right text-xs text-gray-400 font-normal pb-1">Reception</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(details.IndoorCeremonyCapacity || details.IndoorReceptionCapacity) && (
+                      <tr>
+                        <td className="text-gray-600 pr-4 py-0.5">Indoors</td>
+                        <td className="text-right text-gray-800 font-medium pr-4 py-0.5">
+                          {details.IndoorCeremonyCapacity ?? '—'}
+                        </td>
+                        <td className="text-right text-gray-800 font-medium py-0.5">
+                          {details.IndoorReceptionCapacity ?? '—'}
+                        </td>
+                      </tr>
+                    )}
+                    {(details.OutdoorCeremonyCapacity || details.OutdoorReceptionCapacity) && (
+                      <tr>
+                        <td className="text-gray-600 pr-4 py-0.5">Outdoors</td>
+                        <td className="text-right text-gray-800 font-medium pr-4 py-0.5">
+                          {details.OutdoorCeremonyCapacity ?? '—'}
+                        </td>
+                        <td className="text-right text-gray-800 font-medium py-0.5">
+                          {details.OutdoorReceptionCapacity ?? '—'}
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
         )}
 
         {details.Catering && (

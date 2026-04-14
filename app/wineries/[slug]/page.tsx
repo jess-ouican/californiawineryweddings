@@ -259,6 +259,11 @@ export default async function WineryPage({ params }: { params: Promise<Params> }
               </div>
             )}
 
+            {/* Venue Information — owner-submitted details */}
+            {venueDetails && (
+              <VenueInfoSection details={venueDetails} />
+            )}
+
             {/* Opening Hours */}
             {winery.openingHours && winery.openingHours.length > 0 && (
               <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-200">
@@ -274,11 +279,6 @@ export default async function WineryPage({ params }: { params: Promise<Params> }
                   ))}
                 </div>
               </div>
-            )}
-
-            {/* Venue Information — owner-submitted details */}
-            {venueDetails && (
-              <VenueInfoSection details={venueDetails} />
             )}
 
             {/* Wedding Testimonials */}
