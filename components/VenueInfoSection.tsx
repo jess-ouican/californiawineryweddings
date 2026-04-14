@@ -1,7 +1,10 @@
 import { VenueDetails } from '@/lib/airtable';
+import Link from 'next/link';
 
 interface Props {
   details: VenueDetails;
+  isClaimed?: boolean;
+  winerySlug?: string;
 }
 
 function InfoPill({ label }: { label: string }) {
@@ -24,7 +27,7 @@ function InfoRow({ icon, label, value }: { icon: string; label: string; value: s
   );
 }
 
-export default function VenueInfoSection({ details }: Props) {
+export default function VenueInfoSection({ details, isClaimed = false, winerySlug = '' }: Props) {
   const hasPricing = details.CeremonyFeeMin || details.CeremonyFeeMax || details.PackagePriceMin || details.PackagePriceMax;
   const hasCapacity =
     details.MinGuests || details.MaxGuests ||
@@ -223,6 +226,21 @@ export default function VenueInfoSection({ details }: Props) {
         <div className="mb-6 p-4 bg-[#FFF9F5] rounded-lg border border-[#FDDDC4] border-l-4 border-l-[#D4A574]">
           <p className="text-xs font-semibold text-[#8B5A2B] uppercase tracking-wide mb-2">🍇 Heard through the grapevine</p>
           <p className="text-gray-700 text-sm leading-relaxed">{details.GrapevineNote}</p>
+          
+          {/* Claim CTA - only show if not claimed and has grapevine note */}
+          {!isClaimed && winerySlug && (
+            <div className="mt-4 pt-4 border-t border-[#FDDDC4]">
+              <p className="text-sm italic text-[#6b2737]">
+                Sour grapes?{' '}
+                <Link 
+                  href={`/claim/${winerySlug}`}
+                  className="underline hover:text-[#8B3A47] font-medium transition"
+                >
+                  Set the record straight — claim this listing.
+                </Link>
+              </p>
+            </div>
+          )}
         </div>
       )}
 

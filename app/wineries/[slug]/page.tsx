@@ -11,7 +11,7 @@ import WineryCard from '@/components/WineryCard';
 import WeddingPlanningToolsWidget from '@/components/WeddingPlanningToolsWidget';
 import WineryHeaderActions from '@/components/WineryHeaderActions';
 import VenueInfoSection from '@/components/VenueInfoSection';
-import { getVenueDetails } from '@/lib/airtable';
+import { getVenueDetails, isWineryClaimed } from '@/lib/airtable';
 import { Metadata } from 'next';
 
 export const revalidate = 3600;
@@ -67,8 +67,12 @@ export default async function WineryPage({ params }: { params: Promise<Params> }
 
   // Fetch venue details (owner-submitted) — non-blocking, null if not available
   let venueDetails = null;
+  let isClaimed = false;
   try {
     venueDetails = await getVenueDetails(winery.placeId);
+    // Check if this winery has a claimed listing
+    const claimStatus = await isWineryClaimed(winery.placeId);
+    isClaimed = claimStatus.verified || false;
   } catch {
     // ignore — venue details are optional
   }
@@ -261,7 +265,7 @@ export default async function WineryPage({ params }: { params: Promise<Params> }
 
             {/* Venue Information — owner-submitted details */}
             {venueDetails && (
-              <VenueInfoSection details={venueDetails} />
+              <VenueInfoSection details={venueDetails} isClaimed={isClaimed} winerySlug={resolvedParams.slug} />
             )}
 
             {/* Opening Hours */}
