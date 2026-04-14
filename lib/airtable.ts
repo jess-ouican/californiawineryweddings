@@ -236,6 +236,8 @@ export interface VenueDetails {
   ViewTags?: string; // comma-separated
   // Description
   Description?: string;
+  // Community Tips
+  GrapevineNote?: string;
   // Photos
   PhotoUrls?: string; // JSON array string
 }
@@ -279,6 +281,7 @@ export async function getVenueDetails(placeId: string): Promise<VenueDetails | n
       StyleTags: f.StyleTags as string | undefined,
       ViewTags: f.ViewTags as string | undefined,
       Description: f.Description as string | undefined,
+      GrapevineNote: f.GrapevineNote as string | undefined,
       PhotoUrls: f.PhotoUrls as string | undefined,
     };
   } catch (error) {
