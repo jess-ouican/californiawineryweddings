@@ -1,3 +1,5 @@
+'use client';
+
 import dynamic from 'next/dynamic';
 import { loadWineries } from '@/lib/data';
 import type { Metadata } from 'next';
