@@ -2,15 +2,18 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Wedding Planning Tools | California Winery Weddings',
+  title: 'Free Wedding Planning Tools | California Winery Weddings',
   description:
-    'Free wedding planning tools: wine calculator, shuttle calculator, and weather guide for California wine region weddings.',
+    'Free wedding planning tools: winery wedding budget estimator, wine calculator, shuttle calculator, and weather guide for California wine country weddings.',
   keywords: [
+    'winery wedding budget calculator',
+    'vineyard wedding cost estimator',
     'wedding planning tools',
     'wine calculator',
     'shuttle calculator',
     'wedding weather',
-    'California weddings',
+    'California winery wedding cost',
+    'how much does a winery wedding cost',
   ],
   openGraph: {
     title: 'Free Wedding Planning Tools',
@@ -38,7 +41,23 @@ export default function ToolsIndex() {
       {/* Tools Grid */}
       <section className="py-16 sm:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {/* Budget Estimator */}
+            <Link href="/tools/budget-estimator">
+              <div className="bg-white hover:shadow-xl border-2 border-[#8B5A3C] rounded-lg p-8 transition cursor-pointer h-full flex flex-col">
+                <div className="text-4xl mb-4">💰</div>
+                <h2 className="font-serif text-3xl font-bold text-[#6B3E2E] mb-3">
+                  Budget Estimator
+                </h2>
+                <p className="text-gray-600 mb-6 flex-grow">
+                  Get an itemized budget estimate for your winery wedding — tailored to your region, guest count, season, and style. With real California wine country rates.
+                </p>
+                <div className="text-[#6B3E2E] font-semibold hover:text-[#8B5A3C]">
+                  Estimate Budget →
+                </div>
+              </div>
+            </Link>
+
             {/* Wine Calculator */}
             <Link href="/tools/wine-calculator">
               <div className="bg-white hover:shadow-xl border-2 border-[#8B5A3C] rounded-lg p-8 transition cursor-pointer h-full flex flex-col">
