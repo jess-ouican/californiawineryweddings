@@ -29,6 +29,11 @@ export const metadata: Metadata = {
     'compare wedding venues',
     'how to choose a wedding venue',
     'wine country wedding venue checklist',
+    'wedding seating chart',
+    'free wedding seating chart tool',
+    'wedding seating planner',
+    'wedding guest list tracker',
+    'wedding RSVP tracker',
   ],
   openGraph: {
     title: 'Free Wedding Planning Tools',
@@ -185,6 +190,23 @@ export default function ToolsIndex() {
                 </p>
                 <div className="text-[#6B3E2E] font-semibold hover:text-[#8B5A3C]">
                   Calculate Tips →
+                </div>
+              </div>
+            </Link>
+
+            {/* Seating Chart Planner — NEW */}
+            <Link href="/tools/seating-planner">
+              <div className="bg-white hover:shadow-xl border-2 border-[#8B5A3C] rounded-lg p-8 transition cursor-pointer h-full flex flex-col relative">
+                <div className="absolute top-3 right-3 bg-[#6B3E2E] text-white text-xs font-bold px-2 py-1 rounded-full">NEW</div>
+                <div className="text-4xl mb-4">🪑</div>
+                <h2 className="font-serif text-3xl font-bold text-[#6B3E2E] mb-3">
+                  Seating Chart Planner
+                </h2>
+                <p className="text-gray-600 mb-6 flex-grow">
+                  Build your winery wedding seating plan with drag-and-drop table assignments. Track RSVPs, dietary restrictions, and get per-table California wine suggestions.
+                </p>
+                <div className="text-[#6B3E2E] font-semibold hover:text-[#8B5A3C]">
+                  Plan Seating →
                 </div>
               </div>
             </Link>
