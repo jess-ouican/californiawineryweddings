@@ -768,10 +768,6 @@ export default function SeatingPlannerPage() {
 
   const SummaryTab = () => {
     const seatingComplete = unseatedConfirmed.length === 0 && confirmedGuests.length > 0;
-    const dietBreakdown: Partial<Record<Diet, number>> = {};
-    confirmedGuests.forEach((g) => {
-      dietBreakdown[g.diet] = (dietBreakdown[g.diet] ?? 0) + 1;
-    });
 
     const sideBreakdown = {
       bride: confirmedGuests.filter((g) => g.side === 'bride').length,
@@ -857,29 +853,63 @@ export default function SeatingPlannerPage() {
           </div>
         </div>
 
-        {/* Dietary breakdown */}
+        {/* Dietary breakdown — per-guest with table */}
         <div className="bg-white border border-gray-200 rounded-xl p-5">
-          <h3 className="font-serif text-lg font-bold text-[#6B3E2E] mb-4">Dietary Restrictions to Share with Caterer</h3>
-          {Object.entries(dietBreakdown)
-            .filter(([d]) => d !== 'none')
-            .length === 0 ? (
-            <p className="text-sm text-gray-500">No dietary restrictions among confirmed guests.</p>
-          ) : (
-            <div className="space-y-2">
-              {(Object.entries(dietBreakdown) as [Diet, number][])
-                .filter(([d]) => d !== 'none')
-                .sort(([, a], [, b]) => b - a)
-                .map(([d, count]) => (
-                  <div key={d} className="flex items-center justify-between bg-orange-50 rounded-lg px-4 py-2">
-                    <span className="text-sm font-medium text-orange-900">{DIET_LABELS[d]}</span>
-                    <span className="text-sm font-bold text-orange-700">{count} guest{count !== 1 ? 's' : ''}</span>
-                  </div>
-                ))}
-            </div>
-          )}
-          <p className="text-xs text-gray-400 mt-3">
-            💡 Share this list with your winery caterer 4–6 weeks before the wedding.
-          </p>
+          <h3 className="font-serif text-lg font-bold text-[#6B3E2E] mb-1">Dietary Restrictions</h3>
+          <p className="text-xs text-gray-500 mb-4">Share this with your caterer — includes each guest's name and table.</p>
+          {(() => {
+            const restricted = confirmedGuests.filter((g) => g.diet !== 'none');
+            if (restricted.length === 0) {
+              return <p className="text-sm text-gray-500">No dietary restrictions among confirmed guests.</p>;
+            }
+            // Group by diet type
+            const byDiet: Partial<Record<Diet, Guest[]>> = {};
+            restricted.forEach((g) => {
+              if (!byDiet[g.diet]) byDiet[g.diet] = [];
+              byDiet[g.diet]!.push(g);
+            });
+            return (
+              <div className="space-y-4">
+                {(Object.entries(byDiet) as [Diet, Guest[]][])
+                  .sort(([, a], [, b]) => b.length - a.length)
+                  .map(([diet, guestsWithDiet]) => {
+                    const table = tables.find((t) => t.id === guestsWithDiet[0].tableId);
+                    return (
+                      <div key={diet} className="border border-orange-100 rounded-xl overflow-hidden">
+                        <div className="bg-orange-50 px-4 py-2 flex items-center justify-between">
+                          <span className="text-sm font-bold text-orange-900">{DIET_LABELS[diet]}</span>
+                          <span className="text-xs font-medium text-orange-600 bg-orange-100 px-2 py-0.5 rounded-full">
+                            {guestsWithDiet.length} guest{guestsWithDiet.length !== 1 ? 's' : ''}
+                          </span>
+                        </div>
+                        <div className="divide-y divide-gray-100">
+                          {guestsWithDiet.map((g) => {
+                            const assignedTable = tables.find((t) => t.id === g.tableId);
+                            return (
+                              <div key={g.id} className="px-4 py-2.5 flex items-center justify-between">
+                                <span className="text-sm font-medium text-gray-800">{g.name}</span>
+                                {assignedTable ? (
+                                  <span className="text-xs text-[#6B3E2E] font-semibold bg-[#FAF8F3] px-2 py-0.5 rounded-full">
+                                    📍 {assignedTable.name}
+                                  </span>
+                                ) : (
+                                  <span className="text-xs text-amber-600 font-medium bg-amber-50 px-2 py-0.5 rounded-full">
+                                    ⚠ Not seated
+                                  </span>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                <p className="text-xs text-gray-400 pt-1">
+                  💡 Share this list with your winery caterer 4–6 weeks before the wedding. Assign tables first to complete it.
+                </p>
+              </div>
+            );
+          })()}
         </div>
 
         {/* Per-table wine summary */}
