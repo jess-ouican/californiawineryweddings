@@ -15,39 +15,38 @@ export async function GET() {
     // Build sitemap XML
     const baseUrl = 'https://www.californiawineryweddings.com';
     
+    // Static pages
+    const staticPages = [
+      { path: '',            freq: 'weekly',  pri: '1.0' },
+      { path: '/about',      freq: 'monthly', pri: '0.8' },
+      { path: '/map',        freq: 'weekly',  pri: '0.8' },
+      { path: '/directory',  freq: 'weekly',  pri: '0.8' },
+      { path: '/blog',       freq: 'weekly',  pri: '0.9' },
+      { path: '/tools',                freq: 'monthly', pri: '0.8' },
+      { path: '/tools/budget-estimator',   freq: 'monthly', pri: '0.8' },
+      { path: '/tools/wine-calculator',    freq: 'monthly', pri: '0.8' },
+      { path: '/tools/shuttle-calculator', freq: 'monthly', pri: '0.8' },
+      { path: '/tools/wedding-weather',    freq: 'monthly', pri: '0.8' },
+      { path: '/tools/wine-pairing',       freq: 'monthly', pri: '0.8' },
+      { path: '/tools/wedding-timeline',   freq: 'monthly', pri: '0.8' },
+      { path: '/tools/venue-comparison',   freq: 'monthly', pri: '0.8' },
+      { path: '/tools/vendor-tipping',     freq: 'monthly', pri: '0.8' },
+      { path: '/tools/seating-planner',    freq: 'monthly', pri: '0.8' },
+    ];
+
     let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>${baseUrl}</loc>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>${baseUrl}/tools</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>${baseUrl}/tools/wine-calculator</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>${baseUrl}/tools/shuttle-calculator</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>${baseUrl}/tools/wedding-weather</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>${baseUrl}/blog</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+`;
+
+    staticPages.forEach(({ path, freq, pri }) => {
+      sitemap += `  <url>
+    <loc>${baseUrl}${path}</loc>
+    <changefreq>${freq}</changefreq>
+    <priority>${pri}</priority>
   </url>
 `;
+    });
+
 
     // Add region pages
     regions.forEach(region => {
