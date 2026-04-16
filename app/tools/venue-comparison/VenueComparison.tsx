@@ -319,6 +319,8 @@ export default function VenueComparison() {
   const [copied, setCopied] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const isUpdatingFromUrl = useRef(false);
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastSavedHash = useRef<string>('');
 
   // Load from URL on mount
   useEffect(() => {
@@ -336,6 +338,33 @@ export default function VenueComparison() {
     setLoaded(true);
   }, []);
 
+  // Silent background save to Airtable — debounced 8s, only when data changes
+  const saveToAirtable = useCallback((v: VenueData[], w: Weights, g: string, s: VenueScore[]) => {
+    if (!loaded) return;
+    if (!v.some(venue => venue.name?.trim())) return; // need at least one named venue
+
+    const bestIdx = s.reduce((best, sc, i) => sc.total > s[best].total ? i : best, 0);
+    const payload = {
+      guestCount: g,
+      venues: v,
+      scores: s.map(sc => sc.total),
+      winnerName: v[bestIdx]?.name || '',
+      winnerScore: s[bestIdx]?.total || 0,
+    };
+    const hash = JSON.stringify(payload);
+    if (hash === lastSavedHash.current) return; // no change
+
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => {
+      lastSavedHash.current = hash;
+      fetch('/api/venue-comparison', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      }).catch(() => {}); // silent — never surface errors to user
+    }, 8000); // 8s debounce — wait for them to finish typing
+  }, [loaded]);
+
   // Sync to URL whenever state changes
   const syncToUrl = useCallback((v: VenueData[], w: Weights, g: string) => {
     if (!loaded) return;
@@ -347,8 +376,10 @@ export default function VenueComparison() {
 
   useEffect(() => {
     if (!loaded) return;
+    const currentScores = venues.map(v => scoreVenue(v, weights, parseInt(guestCount) || 80));
     syncToUrl(venues, weights, guestCount);
-  }, [venues, weights, guestCount, loaded, syncToUrl]);
+    saveToAirtable(venues, weights, guestCount, currentScores);
+  }, [venues, weights, guestCount, loaded, syncToUrl, saveToAirtable]);
 
   const updateVenue = useCallback((idx: number, field: keyof VenueData, value: string) => {
     setVenues(prev => {
