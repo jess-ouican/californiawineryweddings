@@ -105,10 +105,11 @@ export default function VenueScorecardPage() {
                           type="checkbox"
                           checked={optIn}
                           onChange={e => setOptIn(e.target.checked)}
+                          required
                           className="mt-0.5 accent-[#6B3E2E] flex-shrink-0"
                         />
                         <span className="text-gray-500 font-sans text-xs leading-relaxed">
-                          Add me to the newsletter for venue spotlights &amp; planning tips
+                          I agree to receive emails from California Winery Weddings, including venue spotlights, planning tips, and updates. You can unsubscribe at any time.
                         </span>
                       </label>
                     </form>
@@ -367,10 +368,11 @@ export default function VenueScorecardPage() {
                     type="checkbox"
                     checked={optIn}
                     onChange={e => setOptIn(e.target.checked)}
+                    required
                     className="mt-0.5 accent-[#6B3E2E] flex-shrink-0"
                   />
                   <span className="text-gray-400 font-sans text-xs leading-relaxed">
-                    Add me to the newsletter for venue spotlights &amp; planning tips
+                    I agree to receive emails from California Winery Weddings, including venue spotlights, planning tips, and updates. You can unsubscribe at any time.
                   </span>
                 </label>
               </form>
