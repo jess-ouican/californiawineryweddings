@@ -215,22 +215,8 @@ export default function ToolsIndex() {
               </div>
             </Link>
 
-            {/* Wedding Checklist — NEW */}
-            <Link href="/tools/wedding-checklist">
-              <div className="bg-white hover:shadow-xl border-2 border-[#8B5A3C] rounded-lg p-8 transition cursor-pointer h-full flex flex-col relative">
-                <div className="absolute top-3 right-3 bg-[#6B3E2E] text-white text-xs font-bold px-2 py-1 rounded-full">NEW</div>
-                <div className="text-4xl mb-4">📋</div>
-                <h2 className="font-serif text-3xl font-bold text-[#6B3E2E] mb-3">
-                  Winery Wedding Checklist
-                </h2>
-                <p className="text-gray-600 mb-6 flex-grow">
-                  The complete month-by-month winery wedding checklist — from booking your venue to the day after. Covers wine minimums, corkage fees, noise ordinances, harvest conflicts, and every detail unique to vineyard venues.
-                </p>
-                <div className="text-[#6B3E2E] font-semibold hover:text-[#8B5A3C]">
-                  View Checklist →
-                </div>
-              </div>
-            </Link>
+            {/* Wedding Checklist — hidden until persistence strategy decided */}
+            {/* <Link href="/tools/wedding-checklist">...</Link> */}
           </div>
         </div>
       </section>
