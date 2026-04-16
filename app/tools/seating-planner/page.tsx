@@ -584,96 +584,174 @@ export default function SeatingPlannerPage() {
     </div>
   );
 
-  // ─── TAB: SEATING (Visual Drag-and-Drop) ─────────────────────────────────
+  // ─── TAB: SEATING ────────────────────────────────────────────────────────
+  // UX: tap/click a guest to select, then tap/click a table to assign.
+  // Drag-and-drop also works on desktop (both modes coexist).
 
   const SeatingTab = () => {
+    const [selectedGuestId, setSelectedGuestId] = useState<string | null>(null);
     const unseated = guests.filter((g) => g.tableId === null && g.rsvp !== 'declined');
+    const selectedGuest = selectedGuestId ? guests.find((g) => g.id === selectedGuestId) : null;
+
+    // Tap a guest chip — toggle selection
+    const handleGuestTap = (guestId: string) => {
+      setSelectedGuestId((prev) => (prev === guestId ? null : guestId));
+    };
+
+    // Tap a table — assign selected guest to it, or deselect if already there
+    const handleTableTap = (tableId: string) => {
+      if (!selectedGuestId) return;
+      const table = tables.find((t) => t.id === tableId);
+      if (!table) return;
+      const seated = guestsAtTable(guests, tableId).length;
+      const alreadyHere = guests.find((g) => g.id === selectedGuestId)?.tableId === tableId;
+      if (alreadyHere) {
+        // tap again to unseat
+        assignGuestToTable(selectedGuestId, null);
+      } else if (seated < table.capacity) {
+        assignGuestToTable(selectedGuestId, tableId);
+      }
+      setSelectedGuestId(null);
+    };
+
+    // Tap the unassigned pool — unseat selected guest
+    const handleUnseatedTap = () => {
+      if (selectedGuestId) {
+        assignGuestToTable(selectedGuestId, null);
+        setSelectedGuestId(null);
+      }
+    };
+
+    // Drag handlers (desktop) — clear tap selection when dragging starts
+    const handleGuestDragStart = (guestId: string) => {
+      setSelectedGuestId(null);
+      handleDragStart(guestId);
+    };
 
     return (
-      <div className="space-y-6">
-        <p className="text-sm text-gray-600">
-          Drag guests from the unassigned pool and drop them onto a table, or use the dropdowns in the Guests tab.
-        </p>
+      <div className="space-y-5">
+        {/* Instruction banner */}
+        <div className="bg-[#FAF8F3] border border-[#D4A574] rounded-xl px-4 py-3 text-sm text-[#6B3E2E]">
+          {selectedGuest ? (
+            <span className="font-semibold">
+              ✋ <span className="underline">{selectedGuest.name}</span> selected — now tap a table to assign them, or tap the unassigned pool to unseat.
+            </span>
+          ) : (
+            <span>
+              <span className="font-semibold">Tap a guest</span> to select them, then <span className="font-semibold">tap a table</span> to assign.
+              <span className="hidden sm:inline text-gray-500"> On desktop you can also drag and drop.</span>
+            </span>
+          )}
+        </div>
 
         {/* Unassigned Pool */}
         <div
-          className="border-2 border-dashed border-[#D4A574] rounded-xl p-4 min-h-[80px] bg-[#FAF8F3]"
+          className={`border-2 border-dashed rounded-xl p-4 min-h-[72px] transition ${
+            selectedGuest && selectedGuest.tableId !== null
+              ? 'border-[#6B3E2E] bg-[#FFF8F0] cursor-pointer ring-2 ring-[#6B3E2E]/20'
+              : 'border-[#D4A574] bg-[#FAF8F3]'
+          }`}
+          onClick={handleUnseatedTap}
           onDragOver={(e) => e.preventDefault()}
           onDrop={handleDropOnUnseated}
         >
-          <h3 className="font-semibold text-sm text-[#6B3E2E] mb-3">
-            👤 Unassigned Guests ({unseated.length})
+          <h3 className="font-semibold text-sm text-[#6B3E2E] mb-2">
+            👤 Unassigned ({unseated.length})
+            {selectedGuest && selectedGuest.tableId !== null && (
+              <span className="ml-2 text-xs font-normal text-[#8B5A3C]">← tap to move here</span>
+            )}
           </h3>
           <div className="flex flex-wrap gap-2">
-            {unseated.length === 0 && (
+            {unseated.length === 0 && !selectedGuest && (
               <p className="text-xs text-gray-400 italic">All confirmed guests are seated 🎉</p>
             )}
             {unseated.map((g) => (
-              <div
+              <button
                 key={g.id}
                 draggable
-                onDragStart={() => handleDragStart(g.id)}
+                onDragStart={(e) => { e.stopPropagation(); handleGuestDragStart(g.id); }}
                 onDragEnd={handleDragEnd}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium cursor-grab active:cursor-grabbing transition select-none ${
-                  draggedGuestId === g.id
-                    ? 'bg-[#6B3E2E] text-white opacity-70'
-                    : 'bg-white border border-[#D4A574] text-[#6B3E2E] hover:bg-[#6B3E2E] hover:text-white'
+                onClick={(e) => { e.stopPropagation(); handleGuestTap(g.id); }}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium transition select-none border ${
+                  selectedGuestId === g.id
+                    ? 'bg-[#6B3E2E] text-white border-[#6B3E2E] ring-2 ring-offset-1 ring-[#6B3E2E] scale-105'
+                    : 'bg-white border-[#D4A574] text-[#6B3E2E] hover:bg-[#6B3E2E] hover:text-white active:scale-95'
                 }`}
               >
-                {g.name}
-                {g.diet !== 'none' && ' *'}
-              </div>
+                {g.name}{g.diet !== 'none' && ' *'}
+              </button>
             ))}
           </div>
         </div>
 
         {/* Tables Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
           {tables.map((t) => {
             const seated = guestsAtTable(guests, t.id);
-            const isFull = seated.length >= t.capacity;
+            const isFull = seated.length >= t.capacity && !(selectedGuest?.tableId === t.id);
+            const isTarget = !!selectedGuest && !isFull;
             const wine = WINE_STYLES[t.wineStyle];
             return (
               <div
                 key={t.id}
-                onDragOver={(e) => {
-                  e.preventDefault();
-                }}
-                onDrop={() => handleDropOnTable(t.id)}
-                className={`border-2 rounded-xl p-4 transition min-h-[140px] ${
-                  isFull
-                    ? 'border-red-300 bg-red-50'
+                onClick={() => handleTableTap(t.id)}
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={() => { handleDropOnTable(t.id); }}
+                className={`border-2 rounded-xl p-4 transition min-h-[120px] ${
+                  isFull && !isTarget
+                    ? 'border-red-200 bg-red-50 cursor-default'
+                    : isTarget
+                    ? 'border-[#6B3E2E] bg-[#FFF8F0] cursor-pointer ring-2 ring-[#6B3E2E]/20 hover:bg-[#FAF0E8]'
                     : draggedGuestId
-                    ? 'border-[#6B3E2E] bg-[#FAF8F3] ring-2 ring-[#6B3E2E]/20'
-                    : 'border-gray-200 bg-white hover:border-[#D4A574]'
+                    ? 'border-[#6B3E2E] bg-[#FAF8F3] cursor-pointer ring-2 ring-[#6B3E2E]/20'
+                    : 'border-gray-200 bg-white cursor-default'
                 }`}
               >
-                <div className="flex justify-between items-start mb-2">
+                <div className="flex justify-between items-start mb-1.5">
                   <h4 className="font-serif font-bold text-[#6B3E2E] text-sm">
                     {t.shape === 'round' ? '⭕' : '▬'} {t.name}
                   </h4>
-                  <span className={`text-xs font-medium ${isFull ? 'text-red-600' : 'text-gray-500'}`}>
+                  <span className={`text-xs font-semibold ${seated.length >= t.capacity ? 'text-red-500' : 'text-gray-400'}`}>
                     {seated.length}/{t.capacity}
                   </span>
                 </div>
                 <p className="text-xs text-[#8B5A3C] mb-2">{wine.emoji} {wine.label}</p>
+
+                {/* Capacity bar */}
+                <div className="w-full bg-gray-100 rounded-full h-1.5 mb-2">
+                  <div
+                    className={`h-1.5 rounded-full transition-all ${
+                      seated.length >= t.capacity ? 'bg-red-400' : seated.length / t.capacity > 0.8 ? 'bg-amber-400' : 'bg-green-400'
+                    }`}
+                    style={{ width: `${Math.min((seated.length / t.capacity) * 100, 100)}%` }}
+                  />
+                </div>
+
                 <div className="flex flex-wrap gap-1.5">
                   {seated.map((g) => (
-                    <span
+                    <button
                       key={g.id}
                       draggable
-                      onDragStart={() => handleDragStart(g.id)}
+                      onDragStart={(e) => { e.stopPropagation(); handleGuestDragStart(g.id); }}
                       onDragEnd={handleDragEnd}
-                      className="px-2 py-1 bg-[#6B3E2E] text-white text-xs rounded-full cursor-grab active:cursor-grabbing select-none"
+                      onClick={(e) => { e.stopPropagation(); handleGuestTap(g.id); }}
+                      title={`${g.name} — tap to select`}
+                      className={`px-2 py-1 text-xs rounded-full transition select-none border ${
+                        selectedGuestId === g.id
+                          ? 'bg-amber-500 text-white border-amber-500 ring-2 ring-offset-1 ring-amber-400 scale-105'
+                          : 'bg-[#6B3E2E] text-white border-[#6B3E2E] hover:bg-[#8B5A3C] active:scale-95'
+                      }`}
                     >
-                      {g.name.split(' ')[0]}
-                      {g.diet !== 'none' && ' *'}
-                    </span>
+                      {g.name.split(' ')[0]}{g.diet !== 'none' && ' *'}
+                    </button>
                   ))}
-                  {!isFull && (
-                    <span className="px-2 py-1 border border-dashed border-gray-300 text-gray-400 text-xs rounded-full">
-                      + drop here
+                  {isTarget && (
+                    <span className="px-2 py-1 border border-dashed border-[#6B3E2E] text-[#6B3E2E] text-xs rounded-full animate-pulse">
+                      + seat here
                     </span>
+                  )}
+                  {!isTarget && seated.length === 0 && (
+                    <span className="text-xs text-gray-300 italic">empty</span>
                   )}
                 </div>
               </div>
@@ -681,7 +759,7 @@ export default function SeatingPlannerPage() {
           })}
         </div>
 
-        <p className="text-xs text-gray-400">* = has dietary restriction</p>
+        <p className="text-xs text-gray-400">* = has dietary restriction &nbsp;·&nbsp; Tap a seated guest to move them to a different table</p>
       </div>
     );
   };
