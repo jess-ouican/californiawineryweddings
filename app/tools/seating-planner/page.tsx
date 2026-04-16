@@ -817,11 +817,16 @@ export default function SeatingPlannerPage() {
             <div className="bg-[#6B3E2E] text-white rounded-xl p-5 text-center">
               <p className="font-semibold mb-1">📄 Ready to share?</p>
               <p className="text-sm opacity-90 mb-3">
-                Use your browser&apos;s Print function (Ctrl+P / Cmd+P) to save or print this summary.
+                Opens a clean print view — no navigation, no extra pages. Print or save as PDF from there.
               </p>
-              <button onClick={() => window.print()}
-                className="bg-white text-[#6B3E2E] font-semibold text-sm px-5 py-2 rounded-lg hover:bg-gray-100 transition">
-                🖨 Print / Save as PDF
+              <button
+                onClick={() => {
+                  const encoded = btoa(JSON.stringify({ guests, tables }));
+                  window.open(`/tools/seating-planner/view?d=${encoded}`, '_blank');
+                }}
+                className="bg-white text-[#6B3E2E] font-semibold text-sm px-5 py-2 rounded-lg hover:bg-gray-100 transition"
+              >
+                🖨 Open Print View
               </button>
             </div>
           </div>
