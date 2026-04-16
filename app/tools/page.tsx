@@ -4,7 +4,7 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'Free Wedding Planning Tools | California Winery Weddings',
   description:
-    'Free wedding planning tools for California winery weddings: budget estimator, wine calculator, wine pairing planner, shuttle calculator, wedding weather guide, and wedding day timeline generator.',
+    'Free wedding planning tools for California winery weddings: budget estimator, wine calculator, wine pairing planner, shuttle calculator, wedding weather guide, wedding day timeline generator, and vendor tipping calculator.',
   keywords: [
     'winery wedding budget calculator',
     'vineyard wedding cost estimator',
@@ -21,6 +21,9 @@ export const metadata: Metadata = {
     'how much does a winery wedding cost',
     'wedding wine pairing calculator',
     'what wine to serve at wedding',
+    'wedding vendor tipping calculator',
+    'how much to tip wedding vendors',
+    'winery wedding tip guide',
   ],
   openGraph: {
     title: 'Free Wedding Planning Tools',
@@ -143,6 +146,23 @@ export default function ToolsIndex() {
                 </p>
                 <div className="text-[#6B3E2E] font-semibold hover:text-[#8B5A3C]">
                   Build Timeline →
+                </div>
+              </div>
+            </Link>
+
+            {/* Vendor Tipping Calculator — NEW */}
+            <Link href="/tools/vendor-tipping">
+              <div className="bg-white hover:shadow-xl border-2 border-[#8B5A3C] rounded-lg p-8 transition cursor-pointer h-full flex flex-col relative">
+                <div className="absolute top-3 right-3 bg-[#6B3E2E] text-white text-xs font-bold px-2 py-1 rounded-full">NEW</div>
+                <div className="text-4xl mb-4">💌</div>
+                <h2 className="font-serif text-3xl font-bold text-[#6B3E2E] mb-3">
+                  Vendor Tipping Calculator
+                </h2>
+                <p className="text-gray-600 mb-6 flex-grow">
+                  Know exactly how much to tip every vendor at your winery wedding — caterers, photographers, DJs, bartenders, and more. With CA wine country etiquette.
+                </p>
+                <div className="text-[#6B3E2E] font-semibold hover:text-[#8B5A3C]">
+                  Calculate Tips →
                 </div>
               </div>
             </Link>
