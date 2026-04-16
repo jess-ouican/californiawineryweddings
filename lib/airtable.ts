@@ -332,3 +332,37 @@ export async function saveVenueDetails(data: VenueDetails): Promise<void> {
     throw error;
   }
 }
+
+// ─── Scorecard Leads ───────────────────────────────────────────────────────
+
+const scorecardLeadsTable = base('Scorecard Leads');
+
+export interface ScorecardLead {
+  id?: string;
+  fields: {
+    Email: string;
+    OptIn: boolean;
+    SubmittedAt: string;
+    Source: string;
+  };
+}
+
+export async function saveScorecardLead(email: string, optIn: boolean): Promise<ScorecardLead> {
+  try {
+    console.log('[AIRTABLE] Saving scorecard lead:', { email, optIn });
+    const record = await scorecardLeadsTable.create({
+      Email: email,
+      OptIn: optIn,
+      SubmittedAt: new Date().toISOString(),
+      Source: 'venue-scorecard',
+    });
+    console.log('[AIRTABLE] ✓ Scorecard lead saved:', record.id);
+    return {
+      id: record.id,
+      fields: record.fields as ScorecardLead['fields'],
+    };
+  } catch (error) {
+    console.error('[AIRTABLE] ✗ Failed to save scorecard lead:', error instanceof Error ? error.message : error);
+    throw error;
+  }
+}

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
+import { saveScorecardLead } from '@/lib/airtable';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -8,7 +9,7 @@ const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1QLB1lFQTrK8__b_bSxtb1
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email } = body;
+    const { email, optIn } = body;
 
     if (!email || !email.includes('@')) {
       return NextResponse.json({ error: 'Valid email required' }, { status: 400 });
@@ -169,6 +170,13 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('[SCORECARD] ✓ Sent scorecard to:', normalizedEmail, '| id:', userResult.data?.id);
+
+    // Save lead to Airtable (non-blocking — don't fail the request if this errors)
+    try {
+      await saveScorecardLead(normalizedEmail, optIn === true);
+    } catch (airtableErr) {
+      console.error('[SCORECARD] Airtable save failed (non-blocking):', airtableErr instanceof Error ? airtableErr.message : airtableErr);
+    }
 
     // Notify internal inbox
     await resend.emails.send({

@@ -6,6 +6,7 @@ export default function VenueScorecardPage() {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
+  const [optIn, setOptIn] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -17,7 +18,7 @@ export default function VenueScorecardPage() {
       const res = await fetch('/api/scorecard', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim() }),
+        body: JSON.stringify({ email: email.trim(), optIn }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Something went wrong');
@@ -64,6 +65,7 @@ export default function VenueScorecardPage() {
                 </p>
               </div>
             ) : (
+              <>
               <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
                 <input
                   type="email"
@@ -82,6 +84,18 @@ export default function VenueScorecardPage() {
                   {status === 'loading' ? 'Sending…' : 'Send It to Me →'}
                 </button>
               </form>
+              <label className="flex items-start gap-2 mt-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={optIn}
+                  onChange={e => setOptIn(e.target.checked)}
+                  className="mt-0.5 accent-[#C9A84C]"
+                />
+                <span className="text-[#F5ECD7]/70 font-sans text-xs">
+                  Add me to the California Winery Weddings newsletter for venue spotlights &amp; planning tips
+                </span>
+              </label>
+              </>
             )}
             {status === 'error' && (
               <p className="text-red-300 font-sans text-sm mt-3">{errorMsg}</p>
@@ -327,6 +341,7 @@ export default function VenueScorecardPage() {
               <p className="text-[#F5ECD7] font-sans text-sm">Check your inbox at <strong className="text-[#C9A84C]">{email}</strong></p>
             </div>
           ) : (
+            <>
             <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
               <input
                 type="email"
@@ -345,6 +360,18 @@ export default function VenueScorecardPage() {
                 {status === 'loading' ? 'Sending…' : 'Send It →'}
               </button>
             </form>
+            <label className="flex items-start gap-2 mt-3 max-w-md mx-auto cursor-pointer">
+              <input
+                type="checkbox"
+                checked={optIn}
+                onChange={e => setOptIn(e.target.checked)}
+                className="mt-0.5 accent-[#C9A84C]"
+              />
+              <span className="text-[#F5ECD7]/70 font-sans text-xs">
+                Add me to the California Winery Weddings newsletter for venue spotlights &amp; planning tips
+              </span>
+            </label>
+            </>
           )}
           {status === 'error' && (
             <p className="text-red-300 font-sans text-sm mt-3">{errorMsg}</p>
