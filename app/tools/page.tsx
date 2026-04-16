@@ -24,6 +24,11 @@ export const metadata: Metadata = {
     'wedding vendor tipping calculator',
     'how much to tip wedding vendors',
     'winery wedding tip guide',
+    'winery wedding venue comparison',
+    'wedding venue comparison tool',
+    'compare wedding venues',
+    'how to choose a wedding venue',
+    'wine country wedding venue checklist',
   ],
   openGraph: {
     title: 'Free Wedding Planning Tools',
@@ -146,6 +151,23 @@ export default function ToolsIndex() {
                 </p>
                 <div className="text-[#6B3E2E] font-semibold hover:text-[#8B5A3C]">
                   Build Timeline →
+                </div>
+              </div>
+            </Link>
+
+            {/* Venue Comparison Scorecard — NEW */}
+            <Link href="/tools/venue-comparison">
+              <div className="bg-white hover:shadow-xl border-2 border-[#8B5A3C] rounded-lg p-8 transition cursor-pointer h-full flex flex-col relative">
+                <div className="absolute top-3 right-3 bg-[#6B3E2E] text-white text-xs font-bold px-2 py-1 rounded-full">NEW</div>
+                <div className="text-4xl mb-4">🏛️</div>
+                <h2 className="font-serif text-3xl font-bold text-[#6B3E2E] mb-3">
+                  Venue Comparison
+                </h2>
+                <p className="text-gray-600 mb-6 flex-grow">
+                  Compare up to 3 winery venues side by side. Score wine minimums, exclusivity, noise ordinances, catering flexibility, and more — with a shareable link for your partner.
+                </p>
+                <div className="text-[#6B3E2E] font-semibold hover:text-[#8B5A3C]">
+                  Compare Venues →
                 </div>
               </div>
             </Link>
