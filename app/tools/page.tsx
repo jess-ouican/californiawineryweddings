@@ -38,6 +38,12 @@ export const metadata: Metadata = {
     'wedding seating planner',
     'wedding guest list tracker',
     'wedding RSVP tracker',
+    'winery wedding corkage fee',
+    'corkage fee calculator wedding',
+    'bring your own wine wedding',
+    'winery wine buyout vs corkage',
+    'BYO wine wedding calculator',
+    'wedding wine package vs corkage',
   ],
   openGraph: {
     title: 'Free Wedding Planning Tools',
@@ -217,6 +223,23 @@ export default function ToolsIndex() {
 
             {/* Wedding Checklist — hidden until persistence strategy decided */}
             {/* <Link href="/tools/wedding-checklist">...</Link> */}
+
+            {/* Corkage Fee Calculator — NEW */}
+            <Link href="/tools/corkage-calculator">
+              <div className="bg-white hover:shadow-xl border-2 border-[#8B5A3C] rounded-lg p-8 transition cursor-pointer h-full flex flex-col relative">
+                <div className="absolute top-3 right-3 bg-[#6B3E2E] text-white text-xs font-bold px-2 py-1 rounded-full">NEW</div>
+                <div className="text-4xl mb-4">🍾</div>
+                <h2 className="font-serif text-3xl font-bold text-[#6B3E2E] mb-3">
+                  Corkage Fee Calculator
+                </h2>
+                <p className="text-gray-600 mb-6 flex-grow">
+                  Bring your own wine + pay corkage, or buy the venue&apos;s wine package? Get an exact dollar comparison based on your guest count, event length, and real California rates.
+                </p>
+                <div className="text-[#6B3E2E] font-semibold hover:text-[#8B5A3C]">
+                  Calculate Savings →
+                </div>
+              </div>
+            </Link>
           </div>
         </div>
       </section>
