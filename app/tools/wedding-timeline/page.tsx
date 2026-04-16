@@ -93,10 +93,6 @@ export default function WeddingTimelineTool() {
     ? `${window.location.origin}/tools/wedding-timeline?${paramsToSearch(params)}`
     : '';
 
-  const embedUrl = typeof window !== 'undefined'
-    ? `${window.location.origin}/tools/wedding-timeline/embed?${paramsToSearch(params)}`
-    : '';
-
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(shareUrl);
@@ -105,17 +101,6 @@ export default function WeddingTimelineTool() {
     } catch {
       setShareStatus('error');
       setTimeout(() => setShareStatus('idle'), 2500);
-    }
-  };
-
-  const handleCopyEmbed = async () => {
-    const code = `<iframe src="${embedUrl}" width="520" height="900" frameborder="0" style="border-radius:12px;overflow:hidden"></iframe>`;
-    try {
-      await navigator.clipboard.writeText(code);
-      setShareStatus('copied');
-      setTimeout(() => setShareStatus('idle'), 2500);
-    } catch {
-      setShareStatus('error');
     }
   };
 
@@ -371,22 +356,6 @@ export default function WeddingTimelineTool() {
               </button>
             </div>
 
-            {/* Embed snippet (collapsed by default) */}
-            <details className="group">
-              <summary className="cursor-pointer text-sm text-[#8B5A3C] hover:text-[#6B3E2E] font-medium select-none">
-                {'<>'} Get embed code (for venue coordinators, wedding websites)
-              </summary>
-              <div className="mt-2 p-3 bg-gray-900 rounded-lg text-xs text-green-400 font-mono overflow-x-auto leading-relaxed">
-                {`<iframe src="${embedUrl}" width="520" height="900" frameborder="0" style="border-radius:12px;overflow:hidden"></iframe>`}
-              </div>
-              <button
-                onClick={handleCopyEmbed}
-                className="mt-2 text-xs px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-white rounded transition"
-              >
-                {shareStatus === 'copied' ? '✓ Copied!' : 'Copy embed code'}
-              </button>
-            </details>
-
             {/* The actual timeline card (also the export target) */}
             <TimelineCard
               ref={exportRef}
@@ -427,8 +396,8 @@ export default function WeddingTimelineTool() {
               <li>• Copy the share link and send to your planner, photographer, DJ</li>
               <li>• Download as PDF to print and distribute to vendors</li>
               <li>• Save as PNG to share in a group chat or email</li>
-              <li>• Use embed code to add it to your wedding website</li>
               <li>• Anyone with the link sees your exact settings — no signup needed</li>
+              <li>• Save it to your camera roll so it's always on hand on the day</li>
             </ul>
           </div>
         </div>
