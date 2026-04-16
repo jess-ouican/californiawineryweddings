@@ -815,10 +815,7 @@ export default function SeatingPlannerPage() {
 
             {/* Print */}
             <div className="bg-[#6B3E2E] text-white rounded-xl p-5 text-center">
-              <p className="font-semibold mb-1">📄 Ready to share?</p>
-              <p className="text-sm opacity-90 mb-3">
-                Opens a clean print view — no navigation, no extra pages. Print or save as PDF from there.
-              </p>
+              <p className="font-semibold mb-3">📄 Ready to share?</p>
               <button
                 onClick={() => {
                   const encoded = btoa(JSON.stringify({ guests, tables }));
