@@ -4,7 +4,7 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'Free Wedding Planning Tools | California Winery Weddings',
   description:
-    'Free wedding planning tools: winery wedding budget estimator, wine calculator, shuttle calculator, and weather guide for California wine country weddings.',
+    'Free wedding planning tools for California winery weddings: budget estimator, wine calculator, shuttle calculator, wedding weather guide, and wedding day timeline generator.',
   keywords: [
     'winery wedding budget calculator',
     'vineyard wedding cost estimator',
@@ -12,6 +12,8 @@ export const metadata: Metadata = {
     'wine calculator',
     'shuttle calculator',
     'wedding weather',
+    'wedding day timeline generator',
+    'winery wedding timeline',
     'California winery wedding cost',
     'how much does a winery wedding cost',
   ],
@@ -41,7 +43,7 @@ export default function ToolsIndex() {
       {/* Tools Grid */}
       <section className="py-16 sm:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Budget Estimator */}
             <Link href="/tools/budget-estimator">
               <div className="bg-white hover:shadow-xl border-2 border-[#8B5A3C] rounded-lg p-8 transition cursor-pointer h-full flex flex-col">
@@ -102,6 +104,23 @@ export default function ToolsIndex() {
                 </p>
                 <div className="text-[#6B3E2E] font-semibold hover:text-[#8B5A3C]">
                   View Guide →
+                </div>
+              </div>
+            </Link>
+
+            {/* Wedding Day Timeline — NEW */}
+            <Link href="/tools/wedding-timeline">
+              <div className="bg-white hover:shadow-xl border-2 border-[#8B5A3C] rounded-lg p-8 transition cursor-pointer h-full flex flex-col relative">
+                <div className="absolute top-3 right-3 bg-[#6B3E2E] text-white text-xs font-bold px-2 py-1 rounded-full">NEW</div>
+                <div className="text-4xl mb-4">🕐</div>
+                <h2 className="font-serif text-3xl font-bold text-[#6B3E2E] mb-3">
+                  Timeline Generator
+                </h2>
+                <p className="text-gray-600 mb-6 flex-grow">
+                  Build your winery wedding day schedule — optimized for golden hour portraits, noise ordinance cutoffs, harvest season, and CA wine country logistics.
+                </p>
+                <div className="text-[#6B3E2E] font-semibold hover:text-[#8B5A3C]">
+                  Build Timeline →
                 </div>
               </div>
             </Link>
