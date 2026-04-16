@@ -152,15 +152,35 @@ function scoreVenue(v: VenueData, w: Weights, guestCount: number): VenueScore {
   breakdown['Outdoor/Indoor'] = { score: outdoorScore, max: 5, note: outdoorNote };
 
   // Noise ordinance score
+  // Accepts: "10pm", "10 pm", "10:00 PM", "10:00pm", "22:00", "10" (assumed PM for wedding context)
   let noiseScore = 3;
   let noiseNote = 'Unknown cutoff';
   if (v.noiseOrdinance) {
-    const hour = parseInt(v.noiseOrdinance.split(':')[0]);
-    const isPM = v.noiseOrdinance.toLowerCase().includes('pm');
-    const hour24 = isPM && hour !== 12 ? hour + 12 : hour;
-    if (hour24 >= 22) { noiseScore = 5; noiseNote = `Music until ${v.noiseOrdinance} ✓`; greenFlags.push(`Late noise cutoff (${v.noiseOrdinance})`); }
-    else if (hour24 >= 21) { noiseScore = 3; noiseNote = `Music until ${v.noiseOrdinance}`; }
-    else { noiseScore = 1; noiseNote = `Early cutoff: ${v.noiseOrdinance}`; redFlags.push(`Early noise ordinance cutoff (${v.noiseOrdinance})`); }
+    const raw = v.noiseOrdinance.trim();
+    const normalized = raw.toLowerCase().replace(/\s+/g, '');
+    // Extract numeric hour
+    const hourMatch = normalized.match(/^(\d{1,2})(?::(\d{2}))?/);
+    let hour24 = 0;
+    if (hourMatch) {
+      let hour = parseInt(hourMatch[1]);
+      const isPM = normalized.includes('pm');
+      const isAM = normalized.includes('am');
+      const hasExplicitMeridiem = isPM || isAM;
+      if (!hasExplicitMeridiem) {
+        // No AM/PM — assume wedding context: values 6-12 are PM (6pm-midnight), 1-5 are PM too (1am-5am unlikely)
+        // A noise cutoff of "10" almost certainly means 10 PM, not 10 AM
+        hour24 = hour <= 12 ? hour + 12 : hour; // treat bare numbers as PM
+        if (hour24 >= 24) hour24 = hour; // handle "23" or "22" 24h format
+      } else if (isPM) {
+        hour24 = hour === 12 ? 12 : hour + 12;
+      } else {
+        hour24 = hour === 12 ? 0 : hour;
+      }
+    }
+    const displayTime = raw;
+    if (hour24 >= 22) { noiseScore = 5; noiseNote = `Music until ${displayTime} ✓`; greenFlags.push(`Late noise cutoff (${displayTime})`); }
+    else if (hour24 >= 21) { noiseScore = 3; noiseNote = `Music until ${displayTime}`; }
+    else if (hour24 > 0) { noiseScore = 1; noiseNote = `Early cutoff: ${displayTime}`; redFlags.push(`Early noise ordinance cutoff (${displayTime})`); }
   }
   breakdown['Noise Ordinance'] = { score: noiseScore, max: 5, note: noiseNote };
 
@@ -319,7 +339,8 @@ export default function VenueComparison() {
   const [copied, setCopied] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const isUpdatingFromUrl = useRef(false);
-  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingSave = useRef<{ venues: VenueData[]; weights: Weights; guestCount: string; scores: VenueScore[] } | null>(null);
+  const idleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastSavedHash = useRef<string>('');
 
   // Load from URL on mount
@@ -338,32 +359,43 @@ export default function VenueComparison() {
     setLoaded(true);
   }, []);
 
-  // Silent background save to Airtable — debounced 8s, only when data changes
-  const saveToAirtable = useCallback((v: VenueData[], w: Weights, g: string, s: VenueScore[]) => {
-    if (!loaded) return;
-    if (!v.some(venue => venue.name?.trim())) return; // need at least one named venue
+  // Flush staged save to Airtable — called on share link copy or 60s idle
+  const flushSave = useCallback(() => {
+    const p = pendingSave.current;
+    if (!p) return;
+    if (!p.venues.some(venue => venue.name?.trim())) return;
 
-    const bestIdx = s.reduce((best, sc, i) => sc.total > s[best].total ? i : best, 0);
+    const bestIdx = p.scores.reduce((best, sc, i) => sc.total > p.scores[best].total ? i : best, 0);
     const payload = {
-      guestCount: g,
-      venues: v,
-      scores: s.map(sc => sc.total),
-      winnerName: v[bestIdx]?.name || '',
-      winnerScore: s[bestIdx]?.total || 0,
+      guestCount: p.guestCount,
+      venues: p.venues,
+      scores: p.scores.map(sc => sc.total),
+      winnerName: p.venues[bestIdx]?.name || '',
+      winnerScore: p.scores[bestIdx]?.total || 0,
     };
     const hash = JSON.stringify(payload);
-    if (hash === lastSavedHash.current) return; // no change
+    if (hash === lastSavedHash.current) return;
+    lastSavedHash.current = hash;
+    pendingSave.current = null;
 
-    if (saveTimer.current) clearTimeout(saveTimer.current);
-    saveTimer.current = setTimeout(() => {
-      lastSavedHash.current = hash;
-      fetch('/api/venue-comparison', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      }).catch(() => {}); // silent — never surface errors to user
-    }, 8000); // 8s debounce — wait for them to finish typing
-  }, [loaded]);
+    fetch('/api/venue-comparison', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    }).catch(() => {}); // silent — never surface errors to user
+  }, []);
+
+  // Stage a pending save whenever data changes — don't fire immediately
+  const saveToAirtable = useCallback((v: VenueData[], w: Weights, g: string, s: VenueScore[]) => {
+    if (!loaded) return;
+    if (!v.some(venue => venue.name?.trim())) return;
+
+    pendingSave.current = { venues: v, weights: w, guestCount: g, scores: s };
+
+    // 60s idle fallback — saves if user just stops interacting
+    if (idleTimer.current) clearTimeout(idleTimer.current);
+    idleTimer.current = setTimeout(() => flushSave(), 60_000);
+  }, [loaded, flushSave]);
 
   // Sync to URL whenever state changes
   const syncToUrl = useCallback((v: VenueData[], w: Weights, g: string) => {
@@ -406,6 +438,7 @@ export default function VenueComparison() {
     await navigator.clipboard.writeText(window.location.href);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
+    flushSave(); // save to Airtable when they share
   };
 
   const gc = parseInt(guestCount) || 80;
