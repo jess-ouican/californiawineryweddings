@@ -49,6 +49,7 @@ export interface TimelineEvent {
   tip?: string;
   isHighlight?: boolean;
   isWarning?: boolean;
+  isNudge?: boolean;   // amber — opportunity, not a problem
 }
 
 export interface TimelineParams {
@@ -179,7 +180,8 @@ export function buildTimeline(p: TimelineParams): TimelineEvent[] {
     });
   }
 
-  // Cocktail hour
+  // Cocktail hour portraits + golden hour logic
+  // Portrait block always happens at cocktail hour (standard flow)
   events.push({
     time: ceremonyEnd + 0.5,
     label: 'Cocktail Hour',
@@ -190,20 +192,44 @@ export function buildTimeline(p: TimelineParams): TimelineEvent[] {
       : 'Couple is finishing portraits during cocktail hour — guests enjoy wine and appetizers.',
   });
 
-  // Vineyard portraits / golden hour
   const portraitTime = cocktailEnd - 0.5;
-  const duringGoldenHour = portraitTime >= goldenHourStart - 0.25 && portraitTime <= goldenHourEnd + 0.25;
-  events.push({
-    time: portraitTime,
-    label: 'Vineyard Portraits (Golden Hour)',
-    duration: 0.5,
-    icon: '🌅',
-    tip: duringGoldenHour
-      ? `Perfect timing! Golden hour starts around ${formatTime(goldenHourStart)} — your portraits will be beautifully lit.`
-      : `Golden hour is ${formatTime(goldenHourStart)}–${formatTime(goldenHourEnd)}. Adjust ceremony time to align portraits with golden hour.`,
-    isHighlight: duringGoldenHour,
-    isWarning: !duringGoldenHour,
-  });
+  const portraitEnd = portraitTime + 0.5;
+  const overlapsGoldenHour =
+    portraitEnd >= goldenHourStart - 0.25 && portraitTime <= goldenHourEnd + 0.25;
+  const beforeGoldenHour = portraitEnd < goldenHourStart - 0.25;
+  const afterGoldenHour = portraitTime > goldenHourEnd + 0.25;
+
+  if (overlapsGoldenHour) {
+    // Best case — portraits coincide with golden hour, celebrate it
+    events.push({
+      time: portraitTime,
+      label: 'Vineyard Portraits (Golden Hour ✨)',
+      duration: 0.5,
+      icon: '🌅',
+      tip: `Perfect timing! Golden hour starts around ${formatTime(goldenHourStart)} — your portraits will be beautifully lit.`,
+      isHighlight: true,
+    });
+  } else if (beforeGoldenHour) {
+    // Portraits happen at cocktail hour, but golden hour is later during dancing
+    // — schedule a separate golden hour break
+    events.push({
+      time: portraitTime,
+      label: 'Couple Portraits',
+      duration: 0.5,
+      icon: '📸',
+      tip: `Portraits during cocktail hour. Golden hour isn't until ${formatTime(goldenHourStart)} — you'll step out again then.`,
+    });
+  } else {
+    // afterGoldenHour — portraits are after golden hour ended, warn
+    events.push({
+      time: portraitTime,
+      label: 'Couple Portraits',
+      duration: 0.5,
+      icon: '📸',
+      tip: `Golden hour ends around ${formatTime(goldenHourEnd)} — portraits are scheduled after the best light. Consider an earlier ceremony time.`,
+      isWarning: true,
+    });
+  }
 
   // Reception
   events.push({ time: cocktailEnd,        label: 'Grand Entrance & Reception Begins', duration: 0.25, icon: '🎉', isHighlight: true });
@@ -240,6 +266,18 @@ export function buildTimeline(p: TimelineParams): TimelineEvent[] {
       ? 'Live bands need a break every 45–60 min. Factor this into dance floor energy.'
       : 'DJ sets allow continuous music — no breaks needed.',
   });
+
+  // Golden hour break — injected during dancing if golden hour falls after portraits
+  if (beforeGoldenHour && goldenHourStart < receptionEnd - 0.5) {
+    events.push({
+      time: goldenHourStart,
+      label: 'Golden Hour Break — Step Outside 🌅',
+      duration: 0.33,
+      icon: '🌅',
+      tip: `Slip away from the dance floor for ~20 minutes. The vineyard light is at its best right now — your photographer will thank you.`,
+      isNudge: true,
+    });
+  }
 
   events.push({ time: receptionEnd - 0.25, label: 'Bouquet Toss & Last Dance', duration: 0.2, icon: '💐' });
   events.push({ time: receptionEnd,         label: 'Grand Exit',                duration: 0.25, icon: '✨', isHighlight: true });

@@ -65,6 +65,8 @@ const TimelineCard = React.forwardRef<HTMLDivElement, TimelineCardProps>(
                   ? 'bg-[#FAF8F3] border-l-4 border-[#6B3E2E]'
                   : event.isWarning
                   ? 'bg-red-50 border-l-4 border-red-400'
+                  : event.isNudge
+                  ? 'bg-amber-50 border-l-4 border-amber-400'
                   : ''
               }`}
             >
@@ -74,7 +76,7 @@ const TimelineCard = React.forwardRef<HTMLDivElement, TimelineCardProps>(
                   <div className="flex items-center justify-between gap-2">
                     <div
                       className={`font-semibold text-sm ${
-                        event.isWarning ? 'text-red-700' : 'text-gray-800'
+                        event.isWarning ? 'text-red-700' : event.isNudge ? 'text-amber-700' : 'text-gray-800'
                       }`}
                     >
                       {event.label}
@@ -85,6 +87,8 @@ const TimelineCard = React.forwardRef<HTMLDivElement, TimelineCardProps>(
                           ? 'text-[#6B3E2E]'
                           : event.isWarning
                           ? 'text-red-600'
+                          : event.isNudge
+                          ? 'text-amber-600'
                           : 'text-gray-600'
                       }`}
                     >
@@ -99,7 +103,7 @@ const TimelineCard = React.forwardRef<HTMLDivElement, TimelineCardProps>(
                   {event.tip && showTips && !exportMode && (
                     <div
                       className={`text-xs mt-1 leading-relaxed ${
-                        event.isWarning ? 'text-red-600' : 'text-gray-500'
+                        event.isWarning ? 'text-red-600' : event.isNudge ? 'text-amber-700' : 'text-gray-500'
                       }`}
                     >
                       💡 {event.tip}
