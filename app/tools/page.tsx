@@ -4,18 +4,23 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'Free Wedding Planning Tools | California Winery Weddings',
   description:
-    'Free wedding planning tools for California winery weddings: budget estimator, wine calculator, shuttle calculator, wedding weather guide, and wedding day timeline generator.',
+    'Free wedding planning tools for California winery weddings: budget estimator, wine calculator, wine pairing planner, shuttle calculator, wedding weather guide, and wedding day timeline generator.',
   keywords: [
     'winery wedding budget calculator',
     'vineyard wedding cost estimator',
     'wedding planning tools',
     'wine calculator',
+    'wedding wine pairing',
+    'wedding wine menu',
+    'wine pairing guide wedding',
     'shuttle calculator',
     'wedding weather',
     'wedding day timeline generator',
     'winery wedding timeline',
     'California winery wedding cost',
     'how much does a winery wedding cost',
+    'wedding wine pairing calculator',
+    'what wine to serve at wedding',
   ],
   openGraph: {
     title: 'Free Wedding Planning Tools',
@@ -108,7 +113,24 @@ export default function ToolsIndex() {
               </div>
             </Link>
 
-            {/* Wedding Day Timeline — NEW */}
+            {/* Wine Pairing Planner — NEW */}
+            <Link href="/tools/wine-pairing">
+              <div className="bg-white hover:shadow-xl border-2 border-[#8B5A3C] rounded-lg p-8 transition cursor-pointer h-full flex flex-col relative">
+                <div className="absolute top-3 right-3 bg-[#6B3E2E] text-white text-xs font-bold px-2 py-1 rounded-full">NEW</div>
+                <div className="text-4xl mb-4">🍷</div>
+                <h2 className="font-serif text-3xl font-bold text-[#6B3E2E] mb-3">
+                  Wine Pairing Planner
+                </h2>
+                <p className="text-gray-600 mb-6 flex-grow">
+                  Build your complete wedding wine menu. Select each course and get expert California wine pairing recommendations — with varietals, regional picks, price ranges, and insider tips.
+                </p>
+                <div className="text-[#6B3E2E] font-semibold hover:text-[#8B5A3C]">
+                  Plan Wine Menu →
+                </div>
+              </div>
+            </Link>
+
+            {/* Wedding Day Timeline */}
             <Link href="/tools/wedding-timeline">
               <div className="bg-white hover:shadow-xl border-2 border-[#8B5A3C] rounded-lg p-8 transition cursor-pointer h-full flex flex-col relative">
                 <div className="absolute top-3 right-3 bg-[#6B3E2E] text-white text-xs font-bold px-2 py-1 rounded-full">NEW</div>
