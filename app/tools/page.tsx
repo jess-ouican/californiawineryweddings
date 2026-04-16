@@ -71,6 +71,32 @@ export default function ToolsIndex() {
       {/* Tools Grid */}
       <section className="py-16 sm:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* ── Venue Scorecard Lead Magnet — Featured ── */}
+          <Link href="/tools/venue-scorecard" className="block mb-10">
+            <div className="bg-gradient-to-br from-[#5C1A1A] via-[#8B2635] to-[#5C1A1A] hover:shadow-2xl rounded-xl p-8 sm:p-10 transition cursor-pointer relative overflow-hidden">
+              <div className="absolute top-4 right-4 bg-[#C9A84C] text-[#1A1A1A] text-xs font-bold px-3 py-1 rounded-full font-sans">FREE DOWNLOAD</div>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-6">
+                <div className="text-6xl flex-shrink-0">📊</div>
+                <div className="flex-1">
+                  <h2 className="font-serif text-3xl sm:text-4xl font-bold text-white mb-3">
+                    Winery Wedding Venue Scorecard
+                  </h2>
+                  <p className="text-[#F5ECD7] font-sans text-base mb-4 leading-relaxed">
+                    Score and compare up to 3 venues across 35 winery-specific criteria — wine minimums, corkage policy, noise ordinances, harvest conflicts. Weighted totals auto-calculate. Delivered as a Google Sheet to your inbox.
+                  </p>
+                  <div className="flex flex-wrap gap-2 mb-5">
+                    {['35 criteria', 'Weighted scoring', 'Up to 3 venues', 'Red flags cheat sheet', 'CA region guide'].map(tag => (
+                      <span key={tag} className="bg-white/10 text-[#F5ECD7] font-sans text-xs px-3 py-1 rounded-full border border-white/20">{tag}</span>
+                    ))}
+                  </div>
+                  <div className="inline-block text-[#C9A84C] font-bold font-sans text-base">
+                    Get the Free Scorecard →
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Link>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Budget Estimator */}
             <Link href="/tools/budget-estimator">
