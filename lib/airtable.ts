@@ -335,7 +335,7 @@ export async function saveVenueDetails(data: VenueDetails): Promise<void> {
 
 // ─── Scorecard Leads ───────────────────────────────────────────────────────
 
-const scorecardLeadsTable = base('Scorecard Leads');
+const scorecardLeadsTable = base('tbl8fIqZh9Tx3CHbm'); // Scorecard Leads
 
 export interface ScorecardLead {
   id?: string;
