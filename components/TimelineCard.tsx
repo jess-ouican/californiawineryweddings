@@ -19,10 +19,12 @@ interface TimelineCardProps {
   exportMode?: boolean;
   /** If true, shows the branded CWW footer (always shown in embed/export) */
   branded?: boolean;
+  /** If false, hides the 💡 planner tip lines — use for export and share view */
+  showTips?: boolean;
 }
 
 const TimelineCard = React.forwardRef<HTMLDivElement, TimelineCardProps>(
-  ({ params, timeline, exportMode = false, branded = false }, ref) => {
+  ({ params, timeline, exportMode = false, branded = false, showTips = true }, ref) => {
     const { region, month, ceremonyTime, ceremonyLength } = params;
     const sunset = SUNSET_DATA[region][month];
     const goldenHourStart = sunset - 1.0;
@@ -94,7 +96,7 @@ const TimelineCard = React.forwardRef<HTMLDivElement, TimelineCardProps>(
                       {formatDuration(event.duration)}
                     </div>
                   )}
-                  {event.tip && !exportMode && (
+                  {event.tip && showTips && !exportMode && (
                     <div
                       className={`text-xs mt-1 leading-relaxed ${
                         event.isWarning ? 'text-red-600' : 'text-gray-500'

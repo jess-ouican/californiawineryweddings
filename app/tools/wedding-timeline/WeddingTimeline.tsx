@@ -90,7 +90,7 @@ export default function WeddingTimelineTool() {
   const [exporting, setExporting] = useState<'png' | 'pdf' | null>(null);
 
   const shareUrl = typeof window !== 'undefined'
-    ? `${window.location.origin}/tools/wedding-timeline?${paramsToSearch(params)}`
+    ? `${window.location.origin}/tools/wedding-timeline/view?${paramsToSearch(params)}`
     : '';
 
   const handleCopyLink = async () => {
@@ -362,6 +362,7 @@ export default function WeddingTimelineTool() {
               params={params}
               timeline={timeline}
               branded={true}
+              showTips={true}
             />
           </div>
         </div>
